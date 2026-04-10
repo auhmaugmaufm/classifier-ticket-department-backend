@@ -1,0 +1,34 @@
+version: '3.9'
+
+services:
+  postgres:
+    container_name: ptd-db
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ptd_new
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  api:
+    container_name: ptd-api
+    build: .
+    restart: unless-stopped
+    environment:
+      - APP_ENV=development
+      - APP_PORT=8888
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - DB_NAME=ptd_new
+    ports:
+      - "8888:8888"
+    depends_on:
+      - postgres
+
+volumes:
+  pgdata: {}
