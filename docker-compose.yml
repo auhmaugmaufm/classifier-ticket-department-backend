@@ -7,7 +7,7 @@ services:
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: ptd_new
+      POSTGRES_DB: ctd_new
     ports:
       - "5432:5432"
     volumes:
@@ -24,7 +24,7 @@ services:
       - DB_PORT=5432
       - DB_USER=user
       - DB_PASSWORD=password
-      - DB_NAME=ptd_new
+      - DB_NAME=ctd_new
     ports:
       - "8888:8888"
     depends_on:
