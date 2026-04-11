@@ -7,6 +7,13 @@ definitions:
       password:
         type: string
     type: object
+  dto.DepartmentRequest:
+    properties:
+      company_id:
+        type: string
+      department_name:
+        type: string
+    type: object
 host: localhost:8888
 info:
   contact: {}
@@ -14,6 +21,70 @@ info:
   title: Predict Ticket Department API
   version: "1.0"
 paths:
+  /api/v1/departments/add:
+    post:
+      consumes:
+      - application/json
+      description: Create department in company
+      parameters:
+      - description: Department credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.DepartmentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Add Departments
+      tags:
+      - department
+  /api/v1/departments/company/{company_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get Departments By company ID
+      parameters:
+      - description: Company ID
+        in: path
+        name: company_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Departments By company ID
+      tags:
+      - department
   /api/v1/login:
     post:
       consumes:

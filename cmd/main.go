@@ -38,6 +38,10 @@ func main() {
 	companyService := service.NewCompanyService(companyRepository, jwtManger)
 	companyHandler := handler.NewCompanyHandler(companyService, cfg)
 
+	departmentRepository := repository.NewDepartmentRepository(db)
+	departmentService := service.NewDepartmentService(departmentRepository)
+	departmentHandler := handler.NewDepartmentHandler(departmentService, cfg)
+
 	router := gin.Default()
 
 	// Swagger
@@ -49,6 +53,10 @@ func main() {
 
 	protected := r.Group("")
 	protected.Use(middleware.AuthMiddleware(jwtManger))
+
+	department := protected.Group("/departments")
+	department.POST("/add", departmentHandler.AddDepartments)
+	department.GET("/company/:company_id", departmentHandler.GetDepartmentsByCompanyID)
 
 	addr := fmt.Sprintf(":%s", cfg.AppPort)
 	log.Printf("Server running on %s", addr)

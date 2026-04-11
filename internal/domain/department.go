@@ -22,5 +22,6 @@ type Department struct {
 
 type DepartmentRepository interface {
 	Create(ctx context.Context, department *Department) error
+	CreateBulk(ctx context.Context, departments []Department) error
 	GetByCompanyID(ctx context.Context, company_id uuid.UUID) ([]Department, error)
 }
