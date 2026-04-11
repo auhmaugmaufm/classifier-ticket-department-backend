@@ -21,5 +21,5 @@ type CompanyForm struct {
 
 type CompanyFormRepository interface {
 	Create(ctx context.Context, companyForm *CompanyForm) error
-	GetByID(ctx context.Context, id uuid.UUID) (*CompanyForm, error)
+	GetByID(ctx context.Context, company_id uuid.UUID) (*CompanyForm, error)
 }

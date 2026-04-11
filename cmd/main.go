@@ -42,6 +42,10 @@ func main() {
 	departmentService := service.NewDepartmentService(departmentRepository)
 	departmentHandler := handler.NewDepartmentHandler(departmentService, cfg)
 
+	companyFormRepository := repository.NewCompanyFormRepository(db)
+	companyFormService := service.NewCompanyFormService(companyFormRepository)
+	companyFormHandler := handler.NewCompanyFormHandler(companyFormService, cfg)
+
 	router := gin.Default()
 
 	// Swagger
@@ -57,6 +61,10 @@ func main() {
 	department := protected.Group("/departments")
 	department.POST("/add", departmentHandler.AddDepartments)
 	department.GET("/company/:company_id", departmentHandler.GetDepartmentsByCompanyID)
+
+	companyForm := protected.Group("/company_form")
+	companyForm.POST("/create", companyFormHandler.CreateCompanyForm)
+	companyForm.GET("/company_form/:company_id", companyFormHandler.GetCompanyFormByCompanyID)
 
 	addr := fmt.Sprintf(":%s", cfg.AppPort)
 	log.Printf("Server running on %s", addr)
