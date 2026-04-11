@@ -16,13 +16,13 @@ type DepartmentService interface {
 	GetDepartmentsByCompanyID(ctx context.Context, company_id uuid.UUID) ([]domain.Department, error)
 }
 
-type DeparmtentHandler struct {
+type DepartmentHandler struct {
 	svc DepartmentService
 	cfg *config.Config
 }
 
-func NewDepartmentHandler(service DepartmentService, cfg *config.Config) *DeparmtentHandler {
-	return &DeparmtentHandler{svc: service, cfg: cfg}
+func NewDepartmentHandler(service DepartmentService, cfg *config.Config) *DepartmentHandler {
+	return &DepartmentHandler{svc: service, cfg: cfg}
 }
 
 // @Summary Add Departments
@@ -34,7 +34,7 @@ func NewDepartmentHandler(service DepartmentService, cfg *config.Config) *Deparm
 // @Success 201 {object} map[string]string
 // @Failure 400 {object} map[string]string
 // @Router /api/v1/departments/add [post]
-func (h *DeparmtentHandler) AddDepartments(c *gin.Context) {
+func (h *DepartmentHandler) AddDepartments(c *gin.Context) {
 	var d []dto.DepartmentRequest
 	if err := c.BindJSON(&d); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
@@ -65,7 +65,7 @@ func (h *DeparmtentHandler) AddDepartments(c *gin.Context) {
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /api/v1/departments/company/{company_id} [get]
-func (h *DeparmtentHandler) GetDepartmentsByCompanyID(c *gin.Context) {
+func (h *DepartmentHandler) GetDepartmentsByCompanyID(c *gin.Context) {
 	company_id, err := uuid.Parse(c.Param("company_id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid company_id"})
