@@ -1,20 +1,27 @@
 package handler
 
 import (
+	"context"
+	"errors"
 	"net/http"
 
+	"github.com/auhmaugmaufm/predict-ticket-department-backend/internal/domain"
 	"github.com/auhmaugmaufm/predict-ticket-department-backend/internal/dto"
-	"github.com/auhmaugmaufm/predict-ticket-department-backend/internal/service"
 	"github.com/auhmaugmaufm/predict-ticket-department-backend/pkg/config"
 	"github.com/gin-gonic/gin"
 )
 
+type CompanyService interface {
+	Login(ctx context.Context, email string, password string) (string, error)
+	Register(ctx context.Context, email string, password string) error
+}
+
 type CompanyHandler struct {
-	svc *service.CompanyService
+	svc CompanyService
 	cfg *config.Config
 }
 
-func NewCompanyHandler(service *service.CompanyService, cfg *config.Config) *CompanyHandler {
+func NewCompanyHandler(service CompanyService, cfg *config.Config) *CompanyHandler {
 	return &CompanyHandler{svc: service, cfg: cfg}
 }
 
@@ -35,10 +42,14 @@ func (h *CompanyHandler) Register(c *gin.Context) {
 	}
 	err := h.svc.Register(c, company.Email, company.Password)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		if errors.Is(err, domain.ErrEmailAlreadyExists) {
+			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
-	c.JSON(http.StatusCreated, gin.H{"email": company.Email})
+	c.JSON(http.StatusCreated, gin.H{})
 }
 
 // @Summary Login company
@@ -57,8 +68,12 @@ func (h *CompanyHandler) Login(c *gin.Context) {
 		return
 	}
 	token, err := h.svc.Login(c, company.Email, company.Password)
-	if err != nil {
+	if errors.Is(err, domain.ErrInvalidCredentials) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
+		return
+	}
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"token": token})

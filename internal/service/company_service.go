@@ -21,7 +21,10 @@ func NewCompanyService(repo domain.CompanyRepository, jwtManager *auth.JWTManage
 func (s *CompanyService) Register(ctx context.Context, email string, password string) error {
 	_, err := s.repo.GetByEmail(ctx, email)
 	if err == nil {
-		return errors.New("Email already exists")
+		return domain.ErrEmailAlreadyExists
+	}
+	if !errors.Is(err, domain.ErrNotFound) {
+		return err
 	}
 
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
@@ -38,13 +41,16 @@ func (s *CompanyService) Register(ctx context.Context, email string, password st
 
 func (s *CompanyService) Login(ctx context.Context, email string, password string) (string, error) {
 	company, err := s.repo.GetByEmail(ctx, email)
+	if errors.Is(err, domain.ErrNotFound) {
+		return "", domain.ErrInvalidCredentials
+	}
 	if err != nil {
 		return "", err
 	}
 
 	comparePasswordError := bcrypt.CompareHashAndPassword([]byte(company.PasswordHash), []byte(password))
 	if comparePasswordError != nil {
-		return "", comparePasswordError
+		return "", domain.ErrInvalidCredentials
 	}
 
 	return s.jwtManager.GenerateToken(company.ID.String(), email)

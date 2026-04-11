@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 
 	"github.com/auhmaugmaufm/predict-ticket-department-backend/internal/domain"
 	"gorm.io/gorm"
@@ -22,6 +23,9 @@ func (r *companyRepository) Create(ctx context.Context, company *domain.Company)
 func (r *companyRepository) GetByEmail(ctx context.Context, email string) (*domain.Company, error) {
 	var company *domain.Company
 	err := r.db.WithContext(ctx).Where("email = ?", email).First(&company).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, domain.ErrNotFound
+	}
 	if err != nil {
 		return nil, err
 	}
