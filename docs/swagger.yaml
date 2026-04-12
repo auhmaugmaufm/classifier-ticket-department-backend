@@ -52,7 +52,7 @@ info:
   title: Predict Ticket Department API
   version: "1.0"
 paths:
-  /api/v1/conmpany_form/{company_id}:
+  /api/v1/company_form/{company_id}:
     get:
       consumes:
       - application/json
@@ -83,10 +83,12 @@ paths:
             additionalProperties:
               type: string
             type: object
+      security:
+      - BearerAuth: []
       summary: Get Company Form By company ID
       tags:
       - company_form
-  /api/v1/conmpany_form/create:
+  /api/v1/company_form/create:
     post:
       consumes:
       - application/json
@@ -113,6 +115,8 @@ paths:
             additionalProperties:
               type: string
             type: object
+      security:
+      - BearerAuth: []
       summary: Create Company Form
       tags:
       - company_form
@@ -143,6 +147,8 @@ paths:
             additionalProperties:
               type: string
             type: object
+      security:
+      - BearerAuth: []
       summary: Add Departments
       tags:
       - department
@@ -177,6 +183,8 @@ paths:
             additionalProperties:
               type: string
             type: object
+      security:
+      - BearerAuth: []
       summary: Get Departments By company ID
       tags:
       - department
@@ -324,6 +332,8 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/dto.CompanyRequest'
+      produces:
+      - application/json
       responses:
         "201":
           description: Created

@@ -15,8 +15,13 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/conmpany_form/create": {
+        "/api/v1/company_form/create": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Create Company Form",
                 "consumes": [
                     "application/json"
@@ -61,8 +66,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/conmpany_form/{company_id}": {
+        "/api/v1/company_form/{company_id}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get Company Form By company ID",
                 "consumes": [
                     "application/json"
@@ -114,6 +124,11 @@ const docTemplate = `{
         },
         "/api/v1/departments/add": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Create department in company",
                 "consumes": [
                     "application/json"
@@ -160,6 +175,11 @@ const docTemplate = `{
         },
         "/api/v1/departments/company/{company_id}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get Departments By company ID",
                 "consumes": [
                     "application/json"
@@ -413,6 +433,9 @@ const docTemplate = `{
             "post": {
                 "description": "Create new company accout",
                 "consumes": [
+                    "application/json"
+                ],
+                "produces": [
                     "application/json"
                 ],
                 "tags": [

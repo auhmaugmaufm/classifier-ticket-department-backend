@@ -29,7 +29,7 @@ func NewCompanyHandler(service CompanyService, cfg *config.Config) *CompanyHandl
 // @Description Create new company accout
 // @Tags Company
 // @Accept json
-// @Product json
+// @Produce json
 // @Param request body dto.CompanyRequest true "Company credentials"
 // @Success 201 {object} map[string]string
 // @Failure 400 {object} map[string]string

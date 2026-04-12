@@ -1,12 +1,11 @@
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
-CREATE TABLE
-    IF NOT EXISTS tickets (
+CREATE TABLE IF NOT EXISTS tickets (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
         message TEXT NOT NULL,
         status TEXT NOT NULL,
         title TEXT NOT NULL,
-        decription TEXT NOT NULL,
+        description TEXT NOT NULL,
         department_id UUID NOT NULL,
         priority TEXT NOT NULL,
         submitted_date TIMESTAMPTZ,

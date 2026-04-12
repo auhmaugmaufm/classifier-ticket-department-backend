@@ -1,7 +1,6 @@
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
-CREATE TABLE
-    IF NOT EXISTS departments (
+CREATE TABLE IF NOT EXISTS departments (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
         department_name TEXT NOT NULL,
         company_id UUID NOT NULL,

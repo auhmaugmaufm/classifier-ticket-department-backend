@@ -30,21 +30,22 @@ func NewDepartmentHandler(service DepartmentService, cfg *config.Config) *Depart
 // @Tags department
 // @Accept json
 // @Produce json
+// @Security BearerAuth
 // @Param request body dto.DepartmentRequest true "Department credentials"
 // @Success 201 {object} map[string]string
 // @Failure 400 {object} map[string]string
 // @Router /api/v1/departments/add [post]
 func (h *DepartmentHandler) AddDepartments(c *gin.Context) {
-	var d []dto.DepartmentRequest
+	var d *dto.DepartmentRequest
 	if err := c.BindJSON(&d); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
 		return
 	}
-	departments := make([]domain.Department, len(d))
-	for i, department := range d {
+	departments := make([]domain.Department, len(d.DepartmentName))
+	for i, departmentName := range d.DepartmentName {
 		departments[i] = domain.Department{
-			DepartmentName: department.DepartmentName,
-			CompanyID:      department.CompanyID,
+			DepartmentName: departmentName,
+			CompanyID:      d.CompanyID,
 		}
 	}
 	err := h.svc.AddDepartments(c, departments)
@@ -60,6 +61,7 @@ func (h *DepartmentHandler) AddDepartments(c *gin.Context) {
 // @Tags department
 // @Accept json
 // @Produce json
+// @Security BearerAuth
 // @Param company_id path string true "Company ID"
 // @Success 200 {object} map[string]interface{}
 // @Failure 400 {object} map[string]string

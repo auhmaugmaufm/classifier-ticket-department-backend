@@ -68,11 +68,11 @@ func main() {
 
 	department := protected.Group("/departments")
 	department.POST("/add", departmentHandler.AddDepartments)
-	department.GET("/company/:company_id", departmentHandler.GetDepartmentsByCompanyID)
+	department.GET("/:company_id", departmentHandler.GetDepartmentsByCompanyID)
 
 	companyForm := protected.Group("/company_form")
 	companyForm.POST("/create", companyFormHandler.CreateCompanyForm)
-	companyForm.GET("/company_form/:company_id", companyFormHandler.GetCompanyFormByCompanyID)
+	companyForm.GET("/:company_id", companyFormHandler.GetCompanyFormByCompanyID)
 
 	forms := protected.Group("/forms")
 	forms.POST("/submit", formHandler.SubmitForm)
