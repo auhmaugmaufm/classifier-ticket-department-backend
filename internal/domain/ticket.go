@@ -41,6 +41,5 @@ type Ticket struct {
 type TicketRepository interface {
 	Create(ctx context.Context, ticket *Ticket) error
 	CreateBulk(ctx context.Context, tickets []Ticket) error
-	GetAll(ctx context.Context) ([]Ticket, error)
-	// TODO: Get by CompanyID
+	GetByCompanyID(ctx context.Context, company_id uuid.UUID) ([]Ticket, error)
 }
