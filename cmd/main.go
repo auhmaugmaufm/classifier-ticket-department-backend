@@ -50,6 +50,10 @@ func main() {
 	companyFormService := service.NewCompanyFormService(companyFormRepository)
 	companyFormHandler := handler.NewCompanyFormHandler(companyFormService, cfg)
 
+	ticketRepository := repository.NewTicketRepositry(db)
+	ticketService := service.NewTicketService(ticketRepository)
+	ticketHandler := handler.NewTicketHandler(ticketService, cfg)
+
 	router := gin.Default()
 
 	// Swagger
@@ -74,6 +78,11 @@ func main() {
 	forms.POST("/submit", formHandler.SubmitForm)
 	forms.GET("/:company_id", formHandler.GetSubmitFormCompanyID)
 	forms.GET("/:company_id/per-day", formHandler.GetSubmitFormPerDayByCompanyID)
+
+	ticket := protected.Group("/tickets")
+	ticket.POST("/create", ticketHandler.CreateTicket)
+	ticket.POST("/create-bulk", ticketHandler.CreateTickets)
+	ticket.GET("/:company_id", ticketHandler.GetTicketsByCompanyID)
 
 	addr := fmt.Sprintf(":%s", cfg.AppPort)
 	log.Printf("Server running on %s", addr)
