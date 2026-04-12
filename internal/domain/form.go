@@ -20,5 +20,6 @@ type Form struct {
 
 type FormRepository interface {
 	Create(ctx context.Context, form *Form) error
-	GetByFormID(ctx context.Context, form_id uuid.UUID) ([]Form, error)
+	GetByCompanyID(ctx context.Context, company_id uuid.UUID) ([]Form, error)
+	GetPerDayByCompanyID(ctx context.Context, company_id uuid.UUID, dateStr string) ([]Form, error)
 }

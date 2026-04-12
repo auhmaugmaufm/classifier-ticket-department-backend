@@ -42,6 +42,10 @@ func main() {
 	departmentService := service.NewDepartmentService(departmentRepository)
 	departmentHandler := handler.NewDepartmentHandler(departmentService, cfg)
 
+	formRepository := repository.NewFormRepository(db)
+	formService := service.NewFormService(formRepository)
+	formHandler := handler.NewFormHandler(formService, cfg)
+
 	companyFormRepository := repository.NewCompanyFormRepository(db)
 	companyFormService := service.NewCompanyFormService(companyFormRepository)
 	companyFormHandler := handler.NewCompanyFormHandler(companyFormService, cfg)
@@ -65,6 +69,11 @@ func main() {
 	companyForm := protected.Group("/company_form")
 	companyForm.POST("/create", companyFormHandler.CreateCompanyForm)
 	companyForm.GET("/company_form/:company_id", companyFormHandler.GetCompanyFormByCompanyID)
+
+	forms := protected.Group("/forms")
+	forms.POST("/submit", formHandler.SubmitForm)
+	forms.GET("/:company_id", formHandler.GetSubmitFormCompanyID)
+	forms.GET("/:company_id/per-day", formHandler.GetSubmitFormPerDayByCompanyID)
 
 	addr := fmt.Sprintf(":%s", cfg.AppPort)
 	log.Printf("Server running on %s", addr)
