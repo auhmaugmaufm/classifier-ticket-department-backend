@@ -14,6 +14,7 @@ import (
 
 	_ "github.com/auhmaugmaufm/predict-ticket-department-backend/docs"
 	"github.com/auhmaugmaufm/predict-ticket-department-backend/internal/auth"
+	"github.com/auhmaugmaufm/predict-ticket-department-backend/internal/cron"
 	"github.com/auhmaugmaufm/predict-ticket-department-backend/internal/handler"
 	"github.com/auhmaugmaufm/predict-ticket-department-backend/internal/middleware"
 	"github.com/auhmaugmaufm/predict-ticket-department-backend/internal/repository"
@@ -33,6 +34,10 @@ func main() {
 	db := database.NewPostgresDB(cfg)
 
 	jwtManger := auth.NewJWTManager(cfg.JWTSecret, cfg.JWTExpireHour)
+
+	aiService := service.NewAIService(
+		cfg.AIBackendUrl,
+	)
 
 	companyRepository := repository.NewCompanyRepository(db)
 	companyService := service.NewCompanyService(companyRepository, jwtManger)
@@ -54,10 +59,17 @@ func main() {
 	ticketService := service.NewTicketService(ticketRepository)
 	ticketHandler := handler.NewTicketHandler(ticketService, cfg)
 
+	formCron := cron.NewFormCron(formService, companyService, aiService)
+	formCron.Start()
+	defer formCron.Stop()
+
 	router := gin.Default()
 
 	// Swagger
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	// Submit Form: post /form/create
+	router.POST("/form/submit", formHandler.SubmitForm)
 
 	r := router.Group("/api/v1")
 	r.POST("/register", companyHandler.Register)
@@ -75,7 +87,6 @@ func main() {
 	companyForm.GET("/:company_id", companyFormHandler.GetCompanyFormByCompanyID)
 
 	forms := protected.Group("/forms")
-	forms.POST("/submit", formHandler.SubmitForm)
 	forms.GET("/:company_id", formHandler.GetSubmitFormCompanyID)
 	forms.GET("/:company_id/per-day", formHandler.GetSubmitFormPerDayByCompanyID)
 

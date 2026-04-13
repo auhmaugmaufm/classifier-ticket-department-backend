@@ -55,3 +55,7 @@ func (s *CompanyService) Login(ctx context.Context, email string, password strin
 
 	return s.jwtManager.GenerateToken(company.ID.String(), email)
 }
+
+func (s *CompanyService) GetAllCompanies(ctx context.Context) ([]domain.Company, error) {
+	return s.repo.GetAll(ctx)
+}

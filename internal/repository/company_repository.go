@@ -20,6 +20,12 @@ func (r *companyRepository) Create(ctx context.Context, company *domain.Company)
 	return r.db.WithContext(ctx).Create(company).Error
 }
 
+func (r *companyRepository) GetAll(ctx context.Context) ([]domain.Company, error) {
+	var companies []domain.Company
+	err := r.db.WithContext(ctx).Find(&companies).Error
+	return companies, err
+}
+
 func (r *companyRepository) GetByEmail(ctx context.Context, email string) (*domain.Company, error) {
 	var company *domain.Company
 	err := r.db.WithContext(ctx).Where("email = ?", email).First(&company).Error
