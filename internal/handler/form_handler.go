@@ -43,7 +43,7 @@ func (h *FormHandler) SubmitForm(c *gin.Context) {
 		return
 	}
 	form := &domain.Form{
-		FormID:      req.FormID,
+		LinkID:      req.LinkID,
 		Title:       req.Title,
 		Description: req.Description,
 	}

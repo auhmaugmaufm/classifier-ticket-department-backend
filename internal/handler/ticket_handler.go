@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/auhmaugmaufm/predict-ticket-department-backend/internal/domain"
@@ -43,13 +44,12 @@ func (h *TicketHandler) CreateTicket(c *gin.Context) {
 		return
 	}
 	ticket := &domain.Ticket{
-		Message:       req.Message,
-		Status:        domain.PredictStatus(req.Status),
-		Title:         req.Title,
-		Description:   req.Description,
-		DepartmentID:  req.DepartmentID,
-		Priority:      domain.TicketPriority(req.Priority),
-		SubmittedDate: req.SubmittedDate,
+		Message:      req.Message,
+		Status:       domain.PredictStatus(req.Status),
+		Title:        req.Title,
+		Description:  req.Description,
+		DepartmentID: req.DepartmentID,
+		Priority:     domain.TicketPriority(req.Priority),
 	}
 	err := h.svc.CreateTicket(c, ticket)
 	if err != nil {
@@ -75,16 +75,17 @@ func (h *TicketHandler) CreateTickets(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
 		return
 	}
+	fmt.Printf("%v\n", req)
 	tickets := make([]domain.Ticket, len(req))
 	for i, t := range req {
 		tickets[i] = domain.Ticket{
-			Message:       t.Message,
-			Status:        domain.PredictStatus(t.Status),
-			Title:         t.Title,
-			Description:   t.Description,
-			DepartmentID:  t.DepartmentID,
-			Priority:      domain.TicketPriority(t.Priority),
-			SubmittedDate: t.SubmittedDate,
+			Message:      t.Message,
+			Status:       domain.PredictStatus(t.Status),
+			Title:        t.Title,
+			Description:  t.Description,
+			FormID:       t.FormID,
+			DepartmentID: t.DepartmentID,
+			Priority:     domain.TicketPriority(t.Priority),
 		}
 	}
 	err := h.svc.CreateTickets(c, tickets)

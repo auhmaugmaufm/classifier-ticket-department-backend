@@ -51,9 +51,9 @@ func main() {
 	formService := service.NewFormService(formRepository)
 	formHandler := handler.NewFormHandler(formService, cfg)
 
-	companyFormRepository := repository.NewCompanyFormRepository(db)
-	companyFormService := service.NewCompanyFormService(companyFormRepository)
-	companyFormHandler := handler.NewCompanyFormHandler(companyFormService, cfg)
+	LinkRepository := repository.NewLinkRepository(db)
+	LinkService := service.NewLinkService(LinkRepository)
+	LinkHandler := handler.NewLinkHandler(LinkService, cfg)
 
 	ticketRepository := repository.NewTicketRepositry(db)
 	ticketService := service.NewTicketService(ticketRepository)
@@ -74,17 +74,19 @@ func main() {
 	r := router.Group("/api/v1")
 	r.POST("/register", companyHandler.Register)
 	r.POST("/login", companyHandler.Login)
+	r.POST("/create-bulk", ticketHandler.CreateTickets)
+	r.GET("/departments/:company_id", departmentHandler.GetDepartmentsByCompanyID)
 
 	protected := r.Group("")
 	protected.Use(middleware.AuthMiddleware(jwtManger))
 
 	department := protected.Group("/departments")
 	department.POST("/add", departmentHandler.AddDepartments)
-	department.GET("/:company_id", departmentHandler.GetDepartmentsByCompanyID)
+	// department.GET("/:company_id", departmentHandler.GetDepartmentsByCompanyID)
 
-	companyForm := protected.Group("/company_form")
-	companyForm.POST("/create", companyFormHandler.CreateCompanyForm)
-	companyForm.GET("/:company_id", companyFormHandler.GetCompanyFormByCompanyID)
+	Link := protected.Group("/links")
+	Link.POST("/create", LinkHandler.CreateLink)
+	Link.GET("/:company_id", LinkHandler.GetLinkByCompanyID)
 
 	forms := protected.Group("/forms")
 	forms.GET("/:company_id", formHandler.GetSubmitFormCompanyID)

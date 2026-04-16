@@ -27,6 +27,7 @@ func NewAIService(baseURL string) *AIService {
 
 func (s *AIService) SendFormsToAI(ctx context.Context, data []dto.CompanyFormItems) (*dto.AIResponse, error) {
 	body, err := json.Marshal(dto.AIDataRequest{Data: data})
+	fmt.Println(string(body))
 	if err != nil {
 		return nil, err
 	}

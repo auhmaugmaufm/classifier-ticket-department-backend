@@ -1,9 +1,9 @@
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
-CREATE TABLE IF NOT EXISTS company_forms (
+CREATE TABLE IF NOT EXISTS links (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
         company_id UUID NOT NULL,
-        link_form TEXT NOT NULL,
+        link TEXT NOT NULL,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
         deleted_at TIMESTAMPTZ,

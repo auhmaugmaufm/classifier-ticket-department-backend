@@ -11,18 +11,18 @@ import (
 	"github.com/google/uuid"
 )
 
-type CompanyFormService interface {
-	CreateCompanyForm(ctx context.Context, company_id uuid.UUID) error
-	GetCompanyFormByCompanyID(ctx context.Context, company_id uuid.UUID) (*domain.CompanyForm, error)
+type LinkService interface {
+	CreateLink(ctx context.Context, company_id uuid.UUID) error
+	GetLinkByCompanyID(ctx context.Context, company_id uuid.UUID) (*domain.Link, error)
 }
 
-type CompanyFormHandler struct {
-	svc CompanyFormService
+type LinkHandler struct {
+	svc LinkService
 	cfg *config.Config
 }
 
-func NewCompanyFormHandler(service CompanyFormService, cfg *config.Config) *CompanyFormHandler {
-	return &CompanyFormHandler{svc: service, cfg: cfg}
+func NewLinkHandler(service LinkService, cfg *config.Config) *LinkHandler {
+	return &LinkHandler{svc: service, cfg: cfg}
 }
 
 // @Summary Create Company Form
@@ -31,17 +31,17 @@ func NewCompanyFormHandler(service CompanyFormService, cfg *config.Config) *Comp
 // @Accept json
 // @Produce json
 // @Security BearerAuth
-// @Param request body dto.CompanyFormRequest true "CompanyForm credentials"
+// @Param request body dto.LinkRequest true "Link credentials"
 // @Success 201 {object} map[string]string
 // @Failure 400 {object} map[string]string
 // @Router /api/v1/company_form/create [post]
-func (h *CompanyFormHandler) CreateCompanyForm(c *gin.Context) {
-	var f *dto.CompanyFormRequest
+func (h *LinkHandler) CreateLink(c *gin.Context) {
+	var f *dto.LinkRequest
 	if err := c.BindJSON(&f); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
 		return
 	}
-	err := h.svc.CreateCompanyForm(c, f.CompanyID)
+	err := h.svc.CreateLink(c, f.CompanyID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -60,14 +60,14 @@ func (h *CompanyFormHandler) CreateCompanyForm(c *gin.Context) {
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /api/v1/company_form/{company_id} [get]
-func (h *CompanyFormHandler) GetCompanyFormByCompanyID(c *gin.Context) {
+func (h *LinkHandler) GetLinkByCompanyID(c *gin.Context) {
 	company_id, err := uuid.Parse(c.Param("company_id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid company_id"})
 		return
 	}
 
-	company_form, err := h.svc.GetCompanyFormByCompanyID(c, company_id)
+	company_form, err := h.svc.GetLinkByCompanyID(c, company_id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return

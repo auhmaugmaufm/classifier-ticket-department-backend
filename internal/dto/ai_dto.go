@@ -15,6 +15,6 @@ type CompanyFormItems struct {
 }
 
 type AIResponse struct {
-	Success bool   `json:"success"`
-	Message string `json:"message"`
+	Message     string `json:"message"`
+	QueuedCount int    `json:"queued_count"`
 }
