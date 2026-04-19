@@ -35,15 +35,13 @@ func main() {
 
 	jwtManger := auth.NewJWTManager(cfg.JWTSecret, cfg.JWTExpireHour)
 
-	aiService := service.NewAIService(
-		cfg.AIBackendUrl,
-	)
+	txManager := repository.NewTxManager(db)
 
 	companyRepository := repository.NewCompanyRepository(db)
-	companyService := service.NewCompanyService(companyRepository, jwtManger)
+	departmentRepository := repository.NewDepartmentRepository(db)
+	companyService := service.NewCompanyService(companyRepository, departmentRepository, txManager, jwtManger)
 	companyHandler := handler.NewCompanyHandler(companyService, cfg)
 
-	departmentRepository := repository.NewDepartmentRepository(db)
 	departmentService := service.NewDepartmentService(departmentRepository)
 	departmentHandler := handler.NewDepartmentHandler(departmentService, cfg)
 
@@ -54,6 +52,10 @@ func main() {
 	LinkRepository := repository.NewLinkRepository(db)
 	LinkService := service.NewLinkService(LinkRepository)
 	LinkHandler := handler.NewLinkHandler(LinkService, cfg)
+
+	aiService := service.NewAIService(
+		cfg.AIBackendUrl,
+	)
 
 	ticketRepository := repository.NewTicketRepositry(db)
 	ticketService := service.NewTicketService(ticketRepository)

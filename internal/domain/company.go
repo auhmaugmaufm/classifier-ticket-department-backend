@@ -19,6 +19,7 @@ type Company struct {
 
 type CompanyRepository interface {
 	Create(ctx context.Context, company *Company) error
+	CreateTx(tx interface{}, ctx context.Context, company *Company) error
 	GetAll(ctx context.Context) ([]Company, error)
 	GetByEmail(ctx context.Context, email string) (*Company, error)
 }

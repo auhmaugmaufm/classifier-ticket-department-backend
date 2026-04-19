@@ -20,6 +20,10 @@ func (r *departmentRepository) Create(ctx context.Context, department *domain.De
 	return r.db.WithContext(ctx).Create(department).Error
 }
 
+func (r *departmentRepository) CreateTx(tx interface{}, ctx context.Context, department *domain.Department) error {
+	return tx.(*gorm.DB).WithContext(ctx).Create(department).Error
+}
+
 func (r *departmentRepository) CreateBulk(ctx context.Context, departments []domain.Department) error {
 	return r.db.WithContext(ctx).CreateInBatches(departments, 100).Error
 }

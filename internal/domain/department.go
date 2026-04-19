@@ -12,7 +12,7 @@ type Department struct {
 	ID             uuid.UUID      `json:"id" gorm:"type:uuid;primaryKey;default:gen_random_uuid()"`
 	DepartmentName string         `json:"department_name" gorm:"not null"`
 	CompanyID      uuid.UUID      `json:"company_id" gorm:"type:uuid;not null;index"`
-	IsActive       bool           `json:"is_active" gorm:"not null;default:0"`
+	IsActive       bool           `json:"is_active" gorm:"not null;default:1"`
 	CreatedAt      time.Time      `json:"created_at" gorm:"autoCreateTime"`
 	UpdatedAt      time.Time      `json:"updated_at" gorm:"autoUpdateTime"`
 	DeletedAt      gorm.DeletedAt `json:"deleted_at" gorm:"index"`
@@ -22,6 +22,7 @@ type Department struct {
 
 type DepartmentRepository interface {
 	Create(ctx context.Context, department *Department) error
+	CreateTx(tx interface{}, ctx context.Context, department *Department) error
 	CreateBulk(ctx context.Context, departments []Department) error
 	GetByCompanyID(ctx context.Context, company_id uuid.UUID) ([]Department, error)
 }
