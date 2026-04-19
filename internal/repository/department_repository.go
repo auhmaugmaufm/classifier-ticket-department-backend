@@ -30,7 +30,7 @@ func (r *departmentRepository) CreateBulk(ctx context.Context, departments []dom
 
 func (r *departmentRepository) GetByCompanyID(ctx context.Context, company_id uuid.UUID) ([]domain.Department, error) {
 	var departments []domain.Department
-	err := r.db.WithContext(ctx).Where("company_id = ?", company_id).Find(&departments).Error
+	err := r.db.WithContext(ctx).Where("company_id = ? and is_active = true", company_id).Find(&departments).Error
 	if err != nil {
 		return nil, err
 	}
