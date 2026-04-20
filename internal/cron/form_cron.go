@@ -36,7 +36,7 @@ func NewFormCron(formService *service.FormService, companyService *service.Compa
 func (f *FormCron) Start() {
 	f.onceStart.Do(func() {
 		go f.runDailyJobLoop()
-		log.Println("[FormCron] Cron scheduled at 12 AM (Asia/Bangkok)")
+		log.Println("[FormCron] Cron scheduled at every 8 hours (Asia/Bangkok)")
 	})
 }
 
@@ -52,11 +52,13 @@ func (f *FormCron) runDailyJobLoop() {
 
 	for {
 		now := time.Now().In(f.location)
-		// next := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, f.location)
-		// if !now.Before(next) {
-		// 	next = next.Add(24 * time.Hour)
-		// }
-		next := now.Truncate(2 * time.Minute).Add(2 * time.Minute)
+
+		interval := 8 * time.Hour
+		currentHour := time.Duration(now.Hour()) * time.Hour
+		currentInterval := (currentHour / interval) * interval
+
+		next := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, f.location).
+			Add(currentInterval + interval)
 
 		timer := time.NewTimer(next.Sub(now))
 		select {
@@ -91,7 +93,11 @@ func (f *FormCron) runJob() {
 		formsByCompany, err := f.FormService.GetSubmitFormPerDayByCompanyID(ctx, company.ID, lastDate)
 		if err != nil {
 			log.Printf("[FormCron] fetch forms error: %v", err)
-			return
+			continue
+		}
+
+		if len(formsByCompany) == 0 {
+			continue
 		}
 
 		forms := make([]dto.AIForm, len(formsByCompany))
@@ -108,6 +114,11 @@ func (f *FormCron) runJob() {
 			Forms:     forms,
 		}
 		data = append(data, companyData)
+	}
+
+	if len(data) == 0 {
+		log.Println("[FormCron] No data to send")
+		return
 	}
 
 	result, err := f.aiService.SendFormsToAI(ctx, data)
