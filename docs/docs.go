@@ -35,12 +35,12 @@ const docTemplate = `{
                 "summary": "Create Company Form",
                 "parameters": [
                     {
-                        "description": "CompanyForm credentials",
+                        "description": "Link credentials",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CompanyFormRequest"
+                            "$ref": "#/definitions/dto.LinkRequest"
                         }
                     }
                 ],
@@ -56,6 +56,15 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -169,6 +178,15 @@ const docTemplate = `{
                                 "type": "string"
                             }
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
                     }
                 }
             }
@@ -265,6 +283,15 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -417,6 +444,15 @@ const docTemplate = `{
                             }
                         }
                     },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
@@ -465,6 +501,24 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -558,8 +612,8 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -641,14 +695,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "dto.CompanyFormRequest": {
-            "type": "object",
-            "properties": {
-                "company_id": {
-                    "type": "string"
-                }
-            }
-        },
         "dto.CompanyRequest": {
             "type": "object",
             "properties": {
@@ -667,7 +713,10 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "department_name": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -677,10 +726,18 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
-                "form_id": {
+                "link_id": {
                     "type": "string"
                 },
                 "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.LinkRequest": {
+            "type": "object",
+            "properties": {
+                "company_id": {
                     "type": "string"
                 }
             }
@@ -694,6 +751,9 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
+                "form_id": {
+                    "type": "string"
+                },
                 "message": {
                     "type": "string"
                 },
@@ -701,9 +761,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
-                },
-                "submitted_date": {
                     "type": "string"
                 },
                 "title": {

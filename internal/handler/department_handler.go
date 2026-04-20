@@ -34,6 +34,7 @@ func NewDepartmentHandler(service DepartmentService, cfg *config.Config) *Depart
 // @Param request body dto.DepartmentRequest true "Department credentials"
 // @Success 201 {object} map[string]string
 // @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
 // @Router /api/v1/departments/add [post]
 func (h *DepartmentHandler) AddDepartments(c *gin.Context) {
 	var d *dto.DepartmentRequest

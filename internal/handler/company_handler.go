@@ -33,6 +33,8 @@ func NewCompanyHandler(service CompanyService, cfg *config.Config) *CompanyHandl
 // @Param request body dto.CompanyRequest true "Company credentials"
 // @Success 201 {object} map[string]string
 // @Failure 400 {object} map[string]string
+// @Failure 409 {object} map[string]string
+// @Failure 500 {object} map[string]string
 // @Router /api/v1/register [post]
 func (h *CompanyHandler) Register(c *gin.Context) {
 	var company *dto.CompanyRequest
@@ -49,7 +51,7 @@ func (h *CompanyHandler) Register(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
-	c.JSON(http.StatusCreated, gin.H{})
+	c.JSON(http.StatusCreated, gin.H{"message": "register company success"})
 }
 
 // @Summary Login company
@@ -59,6 +61,7 @@ func (h *CompanyHandler) Register(c *gin.Context) {
 // @Produce json
 // @Param request body dto.CompanyRequest true "Company credentials"
 // @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
 // @Failure 401 {object} map[string]string
 // @Router /api/v1/login [post]
 func (h *CompanyHandler) Login(c *gin.Context) {

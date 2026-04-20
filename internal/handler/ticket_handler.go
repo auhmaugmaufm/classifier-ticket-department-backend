@@ -66,7 +66,7 @@ func (h *TicketHandler) CreateTicket(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param request body []dto.TicketRequest true "Ticket credentials"
-// @Success 200 {object} map[string]string
+// @Success 201 {object} map[string]string
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /api/v1/tickets/create-bulk [post]
@@ -95,7 +95,7 @@ func (h *TicketHandler) CreateTickets(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "create ticket success"})
+	c.JSON(http.StatusCreated, gin.H{"message": "create ticket success"})
 }
 
 // @Summary Get Tickets By company ID

@@ -35,6 +35,7 @@ func NewFormHandler(service FormService, cfg *config.Config) *FormHandler {
 // @Param request body dto.FormRequest true "Form credentials"
 // @Success 201 {object} map[string]string
 // @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
 // @Router /api/v1/forms/submit [post]
 func (h *FormHandler) SubmitForm(c *gin.Context) {
 	var req *dto.FormRequest

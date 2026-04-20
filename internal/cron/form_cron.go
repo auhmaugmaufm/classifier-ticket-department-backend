@@ -53,12 +53,19 @@ func (f *FormCron) runDailyJobLoop() {
 	for {
 		now := time.Now().In(f.location)
 
-		interval := 8 * time.Hour
-		currentHour := time.Duration(now.Hour()) * time.Hour
-		currentInterval := (currentHour / interval) * interval
+		// interval := 8 * time.Hour
+		// currentHour := time.Duration(now.Hour()) * time.Hour
+		// currentInterval := (currentHour / interval) * interval
 
-		next := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, f.location).
-			Add(currentInterval + interval)
+		// next := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, f.location).
+		// 	Add(currentInterval + interval)
+
+		// next := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, f.location)
+		// if !now.Before(next) {
+		// 	next = next.Add(24 * time.Hour)
+		// }
+
+		next := now.Truncate(2 * time.Minute).Add(2 * time.Minute)
 
 		timer := time.NewTimer(next.Sub(now))
 		select {

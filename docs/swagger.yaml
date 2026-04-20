@@ -1,10 +1,5 @@
 basePath: /
 definitions:
-  dto.CompanyFormRequest:
-    properties:
-      company_id:
-        type: string
-    type: object
   dto.CompanyRequest:
     properties:
       email:
@@ -17,15 +12,22 @@ definitions:
       company_id:
         type: string
       department_name:
-        type: string
+        items:
+          type: string
+        type: array
     type: object
   dto.FormRequest:
     properties:
       description:
         type: string
-      form_id:
+      link_id:
         type: string
       title:
+        type: string
+    type: object
+  dto.LinkRequest:
+    properties:
+      company_id:
         type: string
     type: object
   dto.TicketRequest:
@@ -34,13 +36,13 @@ definitions:
         type: string
       description:
         type: string
+      form_id:
+        type: string
       message:
         type: string
       priority:
         type: string
       status:
-        type: string
-      submitted_date:
         type: string
       title:
         type: string
@@ -94,12 +96,12 @@ paths:
       - application/json
       description: Create Company Form
       parameters:
-      - description: CompanyForm credentials
+      - description: Link credentials
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.CompanyFormRequest'
+          $ref: '#/definitions/dto.LinkRequest'
       produces:
       - application/json
       responses:
@@ -111,6 +113,12 @@ paths:
             type: object
         "400":
           description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
           schema:
             additionalProperties:
               type: string
@@ -143,6 +151,12 @@ paths:
             type: object
         "400":
           description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
           schema:
             additionalProperties:
               type: string
@@ -287,6 +301,12 @@ paths:
             additionalProperties:
               type: string
             type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
       summary: Submit Form
       tags:
       - form
@@ -307,6 +327,12 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
           schema:
             additionalProperties:
               type: string
@@ -343,6 +369,18 @@ paths:
             type: object
         "400":
           description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Conflict
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
           schema:
             additionalProperties:
               type: string
@@ -437,8 +475,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             additionalProperties:
               type: string

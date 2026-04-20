@@ -34,6 +34,7 @@ func NewLinkHandler(service LinkService, cfg *config.Config) *LinkHandler {
 // @Param request body dto.LinkRequest true "Link credentials"
 // @Success 201 {object} map[string]string
 // @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
 // @Router /api/v1/company_form/create [post]
 func (h *LinkHandler) CreateLink(c *gin.Context) {
 	var f *dto.LinkRequest
@@ -46,7 +47,7 @@ func (h *LinkHandler) CreateLink(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "create company form success"})
+	c.JSON(http.StatusCreated, gin.H{"message": "created company form success"})
 }
 
 // @Summary Get Company Form By company ID
