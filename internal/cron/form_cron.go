@@ -88,10 +88,19 @@ func (f *FormCron) runJob() {
 	var data []dto.CompanyFormItems
 	lastDate := time.Now().In(f.location).AddDate(0, 0, -1).Format("2006-01-02")
 	for _, company := range companies {
-		forms, err := f.FormService.GetSubmitFormPerDayByCompanyID(ctx, company.ID, lastDate)
+		formsByCompany, err := f.FormService.GetSubmitFormPerDayByCompanyID(ctx, company.ID, lastDate)
 		if err != nil {
 			log.Printf("[FormCron] fetch forms error: %v", err)
 			return
+		}
+
+		forms := make([]dto.AIForm, len(formsByCompany))
+		for i, form := range formsByCompany {
+			forms[i] = dto.AIForm{
+				ID:          form.ID,
+				Title:       form.Title,
+				Description: form.Description,
+			}
 		}
 
 		companyData := dto.CompanyFormItems{

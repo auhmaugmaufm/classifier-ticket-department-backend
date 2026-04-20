@@ -43,13 +43,14 @@ func (h *TicketHandler) CreateTicket(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
 		return
 	}
+	priority := domain.TicketPriority(req.Priority)
 	ticket := &domain.Ticket{
 		Message:      req.Message,
 		Status:       domain.PredictStatus(req.Status),
 		Title:        req.Title,
 		Description:  req.Description,
 		DepartmentID: req.DepartmentID,
-		Priority:     domain.TicketPriority(req.Priority),
+		Priority:     &priority,
 	}
 	err := h.svc.CreateTicket(c, ticket)
 	if err != nil {
@@ -78,6 +79,7 @@ func (h *TicketHandler) CreateTickets(c *gin.Context) {
 	fmt.Printf("%v\n", req)
 	tickets := make([]domain.Ticket, len(req))
 	for i, t := range req {
+		priority := domain.TicketPriority(t.Priority)
 		tickets[i] = domain.Ticket{
 			Message:      t.Message,
 			Status:       domain.PredictStatus(t.Status),
@@ -85,7 +87,7 @@ func (h *TicketHandler) CreateTickets(c *gin.Context) {
 			Description:  t.Description,
 			FormID:       t.FormID,
 			DepartmentID: t.DepartmentID,
-			Priority:     domain.TicketPriority(t.Priority),
+			Priority:     &priority,
 		}
 	}
 	err := h.svc.CreateTickets(c, tickets)
