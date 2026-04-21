@@ -28,7 +28,7 @@ func (s *FormService) GetSubmitFormByCompanyID(ctx context.Context, company_id u
 }
 
 func (s *FormService) GetSubmitFormPerDayByCompanyID(ctx context.Context, company_id uuid.UUID, dateStr string) ([]domain.Form, error) {
-	forms, err := s.repo.GetPerDayByCompanyID(ctx, company_id, dateStr)
+	forms, err := s.repo.GetFormCompanyID(ctx, company_id, dateStr)
 	if err != nil {
 		return nil, err
 	}

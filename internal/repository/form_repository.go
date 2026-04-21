@@ -31,13 +31,15 @@ func (r *formRepository) GetByCompanyID(ctx context.Context, company_id uuid.UUI
 	return forms, nil
 }
 
-func (r *formRepository) GetPerDayByCompanyID(ctx context.Context, company_id uuid.UUID, dateStr string) ([]domain.Form, error) {
+func (r *formRepository) GetFormCompanyID(ctx context.Context, company_id uuid.UUID, dateStr string) ([]domain.Form, error) {
 	var forms []domain.Form
 	err := r.db.WithContext(ctx).
 		Select("forms.id", "link_id", "title", "description").
 		Joins("Join links ON links.id = forms.link_id").
+		Joins(`LEFT JOIN tickets ON tickets.form_id = forms.id AND tickets.status = 'failed'`).
 		Where("DATE(forms.created_at) = ?", dateStr).
-		Where("links.company_id = ?", company_id).Find(&forms).Error
+		Where("links.company_id = ?", company_id).
+		Find(&forms).Error
 	if err != nil {
 		return nil, err
 	}
