@@ -23,7 +23,7 @@ type Config struct {
 	JWTExpireHour int
 
 	AIBackendUrl string
-	// AIApiKey     string
+	SecretApiKey string
 }
 
 var cfg *Config
@@ -52,7 +52,7 @@ func Load() {
 		JWTExpireHour: expireHour,
 
 		AIBackendUrl: os.Getenv("AI_BASE_URL"),
-		// AIApiKey:     os.Getenv("Ai_API_KEY"),
+		SecretApiKey: os.Getenv("SECRET_API_KEY"),
 	}
 }
 
