@@ -36,6 +36,7 @@ func (r *formRepository) GetFormCompanyID(ctx context.Context, company_id uuid.U
 	err := r.db.WithContext(ctx).
 		Select("forms.id", "forms.link_id", "forms.title", "forms.description").
 		Joins("Join links ON links.id = forms.link_id").
+		Joins(`LEFT JOIN tickets ON tickets.form_id = forms.id AND tickets.status = 'failed'`).
 		Where("DATE(forms.created_at) = ?", dateStr).
 		Where("links.company_id = ?", company_id).
 		Find(&forms).Error
