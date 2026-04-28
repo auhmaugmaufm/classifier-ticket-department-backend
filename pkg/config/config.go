@@ -23,7 +23,7 @@ type Config struct {
 	JWTExpireHour int
 
 	AIBackendUrl string
-	SecretApiKey string
+	HMACSecret   string
 }
 
 var cfg *Config
@@ -52,7 +52,7 @@ func Load() {
 		JWTExpireHour: expireHour,
 
 		AIBackendUrl: os.Getenv("AI_BASE_URL"),
-		SecretApiKey: os.Getenv("SECRET_API_KEY"),
+		HMACSecret:   os.Getenv("HMAC_SECRET"),
 	}
 }
 

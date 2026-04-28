@@ -8,20 +8,21 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/auhmaugmaufm/predict-ticket-department-backend/internal/auth"
 	"github.com/auhmaugmaufm/predict-ticket-department-backend/internal/dto"
 )
 
 type AIService struct {
 	client  *http.Client
 	baseURL string
-	// apiKey  string
+	hmacKey string
 }
 
-func NewAIService(baseURL string) *AIService {
+func NewAIService(baseURL string, hmacKey string) *AIService {
 	return &AIService{
 		client:  &http.Client{Timeout: 30 * time.Second},
 		baseURL: baseURL,
-		// apiKey:  apiKey,
+		hmacKey: hmacKey,
 	}
 }
 
@@ -38,7 +39,7 @@ func (s *AIService) SendFormsToAI(ctx context.Context, data []dto.CompanyFormIte
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	// req.Header.Set("Authorization", "Bearer "+s.apiKey)
+	req.Header.Set("X-HMAC-Signature", auth.GenerateHMAC(s.hmacKey, body))
 
 	res, err := s.client.Do(req)
 	if err != nil {

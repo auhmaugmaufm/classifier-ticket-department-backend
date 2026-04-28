@@ -55,6 +55,7 @@ func main() {
 
 	aiService := service.NewAIService(
 		cfg.AIBackendUrl,
+		cfg.HMACSecret,
 	)
 
 	ticketRepository := repository.NewTicketRepositry(db)
@@ -76,15 +77,15 @@ func main() {
 	r := router.Group("/api/v1")
 	r.POST("/register", companyHandler.Register)
 	r.POST("/login", companyHandler.Login)
-	r.POST("/create-bulk", ticketHandler.CreateTickets)
-	r.GET("/departments/:company_id", departmentHandler.GetDepartmentsByCompanyID)
+	// r.POST("/create-bulk", ticketHandler.CreateTickets)
+	// r.GET("/departments/:company_id", departmentHandler.GetDepartmentsByCompanyID)
 
 	protected := r.Group("")
 	protected.Use(middleware.AuthMiddleware(jwtManger))
 
 	department := protected.Group("/departments")
 	department.POST("/add", departmentHandler.AddDepartments)
-	// department.GET("/:company_id", departmentHandler.GetDepartmentsByCompanyID)
+	department.GET("/:company_id", departmentHandler.GetDepartmentsByCompanyID)
 
 	Link := protected.Group("/links")
 	Link.POST("/create", LinkHandler.CreateLink)
@@ -98,6 +99,11 @@ func main() {
 	ticket.POST("/create", ticketHandler.CreateTicket)
 	ticket.POST("/create-bulk", ticketHandler.CreateTickets)
 	ticket.GET("/:company_id", ticketHandler.GetTicketsByCompanyID)
+
+	internal_protected := r.Group("")
+	internal_protected.Use(middleware.HMACMiddleware(cfg.HMACSecret))
+	internal_protected.POST("/create-bulk", ticketHandler.CreateTickets)
+	internal_protected.GET("/departments/:company_id", departmentHandler.GetDepartmentsByCompanyID)
 
 	addr := fmt.Sprintf(":%s", cfg.AppPort)
 	log.Printf("Server running on %s", addr)
