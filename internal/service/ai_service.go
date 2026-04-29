@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/auhmaugmaufm/predict-ticket-department-backend/internal/auth"
@@ -41,11 +40,11 @@ func (s *AIService) SendFormsToAI(ctx context.Context, data []dto.CompanyFormIte
 
 	req.Header.Set("Content-Type", "application/json")
 
-	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
-	message := timestamp + "." + string(body)
+	message := string(body)
 	signature := auth.ComputeHMAC(s.hmacKey, message)
-	req.Header.Set("X-Timestamp", timestamp)
 	req.Header.Set("X-HMAC-Signature", "sha256="+signature)
+
+	fmt.Printf("%+v\n", req)
 
 	res, err := s.client.Do(req)
 	if err != nil {

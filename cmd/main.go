@@ -85,7 +85,7 @@ func main() {
 
 	department := protected.Group("/departments")
 	department.POST("/add", departmentHandler.AddDepartments)
-	department.GET("/:company_id", departmentHandler.GetDepartmentsByCompanyID)
+	// department.GET("/:company_id", departmentHandler.GetDepartmentsByCompanyID)
 
 	Link := protected.Group("/links")
 	Link.POST("/create", LinkHandler.CreateLink)
