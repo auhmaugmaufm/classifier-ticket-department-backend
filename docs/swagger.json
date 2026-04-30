@@ -189,7 +189,7 @@
             "get": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "HMACAuth": []
                     }
                 ],
                 "description": "Get Departments By company ID",
@@ -204,6 +204,12 @@
                 ],
                 "summary": "Get Departments By company ID",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "HMAC signature (sha256=...)",
+                        "name": "X-HMAC-Signature",
+                        "in": "header"
+                    },
                     {
                         "type": "string",
                         "description": "Company ID",
@@ -580,6 +586,11 @@
         },
         "/api/v1/tickets/create-bulk": {
             "post": {
+                "security": [
+                    {
+                        "HMACAuth": []
+                    }
+                ],
                 "description": "Create multiple tickets in one request",
                 "consumes": [
                     "application/json"
@@ -592,6 +603,12 @@
                 ],
                 "summary": "Create Tickets",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "HMAC signature (sha256=...)",
+                        "name": "X-HMAC-Signature",
+                        "in": "header"
+                    },
                     {
                         "description": "Ticket credentials",
                         "name": "request",
@@ -767,6 +784,11 @@
         "BearerAuth": {
             "type": "apiKey",
             "name": "Authorization",
+            "in": "header"
+        },
+        "HMACAuth": {
+            "type": "apiKey",
+            "name": "X-HMAC-Signature",
             "in": "header"
         }
     }

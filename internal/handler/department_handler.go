@@ -62,7 +62,8 @@ func (h *DepartmentHandler) AddDepartments(c *gin.Context) {
 // @Tags department
 // @Accept json
 // @Produce json
-// @Security BearerAuth
+// @Security HMACAuth
+// @Param X-HMAC-Signature header string false "HMAC signature (sha256=...)"
 // @Param company_id path string true "Company ID"
 // @Success 200 {object} map[string]interface{}
 // @Failure 400 {object} map[string]string

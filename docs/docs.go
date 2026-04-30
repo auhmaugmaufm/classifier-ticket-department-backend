@@ -195,7 +195,7 @@ const docTemplate = `{
             "get": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "HMACAuth": []
                     }
                 ],
                 "description": "Get Departments By company ID",
@@ -210,6 +210,12 @@ const docTemplate = `{
                 ],
                 "summary": "Get Departments By company ID",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "HMAC signature (sha256=...)",
+                        "name": "X-HMAC-Signature",
+                        "in": "header"
+                    },
                     {
                         "type": "string",
                         "description": "Company ID",
@@ -586,6 +592,11 @@ const docTemplate = `{
         },
         "/api/v1/tickets/create-bulk": {
             "post": {
+                "security": [
+                    {
+                        "HMACAuth": []
+                    }
+                ],
                 "description": "Create multiple tickets in one request",
                 "consumes": [
                     "application/json"
@@ -598,6 +609,12 @@ const docTemplate = `{
                 ],
                 "summary": "Create Tickets",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "HMAC signature (sha256=...)",
+                        "name": "X-HMAC-Signature",
+                        "in": "header"
+                    },
                     {
                         "description": "Ticket credentials",
                         "name": "request",
@@ -773,6 +790,11 @@ const docTemplate = `{
         "BearerAuth": {
             "type": "apiKey",
             "name": "Authorization",
+            "in": "header"
+        },
+        "HMACAuth": {
+            "type": "apiKey",
+            "name": "X-HMAC-Signature",
             "in": "header"
         }
     }

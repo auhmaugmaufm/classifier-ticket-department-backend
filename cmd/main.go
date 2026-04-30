@@ -6,6 +6,9 @@
 // @securityDefinitions.apikey BearerAuth
 // @in header
 // @name Authorization
+// @securityDefinitions.apikey HMACAuth
+// @in header
+// @name X-HMAC-Signature
 package main
 
 import (

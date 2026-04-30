@@ -172,6 +172,10 @@ paths:
       - application/json
       description: Get Departments By company ID
       parameters:
+      - description: HMAC signature (sha256=...)
+        in: header
+        name: X-HMAC-Signature
+        type: string
       - description: Company ID
         in: path
         name: company_id
@@ -198,7 +202,7 @@ paths:
               type: string
             type: object
       security:
-      - BearerAuth: []
+      - HMACAuth: []
       summary: Get Departments By company ID
       tags:
       - department
@@ -464,6 +468,10 @@ paths:
       - application/json
       description: Create multiple tickets in one request
       parameters:
+      - description: HMAC signature (sha256=...)
+        in: header
+        name: X-HMAC-Signature
+        type: string
       - description: Ticket credentials
         in: body
         name: request
@@ -493,6 +501,8 @@ paths:
             additionalProperties:
               type: string
             type: object
+      security:
+      - HMACAuth: []
       summary: Create Tickets
       tags:
       - ticket
@@ -500,5 +510,9 @@ securityDefinitions:
   BearerAuth:
     in: header
     name: Authorization
+    type: apiKey
+  HMACAuth:
+    in: header
+    name: X-HMAC-Signature
     type: apiKey
 swagger: "2.0"

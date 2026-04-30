@@ -65,6 +65,8 @@ func (h *TicketHandler) CreateTicket(c *gin.Context) {
 // @Tags ticket
 // @Accept json
 // @Produce json
+// @Security HMACAuth
+// @Param X-HMAC-Signature header string false "HMAC signature (sha256=...)"
 // @Param request body []dto.TicketRequest true "Ticket credentials"
 // @Success 201 {object} map[string]string
 // @Failure 400 {object} map[string]string
