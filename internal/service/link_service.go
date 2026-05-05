@@ -25,11 +25,7 @@ func (s *LinkService) CreateLink(ctx context.Context, company_id uuid.UUID) erro
 }
 
 func (s *LinkService) GetLinkByCompanyID(ctx context.Context, company_id uuid.UUID) (*domain.Link, error) {
-	company_form, err := s.repo.GetByID(ctx, company_id)
-	if err != nil {
-		return nil, err
-	}
-	return company_form, nil
+	return s.repo.GetByID(ctx, company_id)
 }
 
 func GenerateLink(company_id string) string {

@@ -20,9 +20,5 @@ func (s *DepartmentService) AddDepartments(ctx context.Context, departments []do
 }
 
 func (s *DepartmentService) GetDepartmentsByCompanyID(ctx context.Context, company_id uuid.UUID) ([]domain.Department, error) {
-	departments, err := s.repo.GetByCompanyID(ctx, company_id)
-	if err != nil {
-		return nil, err
-	}
-	return departments, nil
+	return s.repo.GetByCompanyID(ctx, company_id)
 }

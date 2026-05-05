@@ -54,11 +54,7 @@ func (s *CompanyService) RegisterWithDefaultDepartment(ctx context.Context, emai
 			CompanyID:      company.ID,
 			IsActive:       true,
 		}
-		if err := s.departmentRepo.CreateTx(tx, txCtx, otherDept); err != nil {
-			return err
-		}
-
-		return nil
+		return s.departmentRepo.CreateTx(tx, txCtx, otherDept)
 	})
 }
 

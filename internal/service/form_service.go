@@ -20,17 +20,9 @@ func (s *FormService) SubmitForm(ctx context.Context, form *domain.Form) error {
 }
 
 func (s *FormService) GetSubmitFormByCompanyID(ctx context.Context, company_id uuid.UUID) ([]domain.Form, error) {
-	forms, err := s.repo.GetByCompanyID(ctx, company_id)
-	if err != nil {
-		return nil, err
-	}
-	return forms, nil
+	return s.repo.GetByCompanyID(ctx, company_id)
 }
 
 func (s *FormService) GetSubmitFormPerDayByCompanyID(ctx context.Context, company_id uuid.UUID, dateStr string) ([]domain.Form, error) {
-	forms, err := s.repo.GetFormCompanyID(ctx, company_id, dateStr)
-	if err != nil {
-		return nil, err
-	}
-	return forms, nil
+	return s.repo.GetFormCompanyID(ctx, company_id, dateStr)
 }
