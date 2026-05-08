@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/auhmaugmaufm/predict-ticket-department-backend/internal/auth"
 	"github.com/auhmaugmaufm/predict-ticket-department-backend/internal/domain"
 	"github.com/auhmaugmaufm/predict-ticket-department-backend/internal/dto"
 	"github.com/auhmaugmaufm/predict-ticket-department-backend/pkg/config"
@@ -111,13 +112,13 @@ func (h *TicketHandler) CreateTickets(c *gin.Context) {
 // @Failure 500 {object} map[string]string
 // @Router /api/v1/tickets/{company_id} [get]
 func (h *TicketHandler) GetTicketsByCompanyID(c *gin.Context) {
-	company_id, err := uuid.Parse(c.Param("company_id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid company_id"})
+	companyID, ok := auth.GetCompanyID(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "missing company_id"})
 		return
 	}
 
-	tickets, err := h.svc.GetTicketsByCompanyID(c, company_id)
+	tickets, err := h.svc.GetTicketsByCompanyID(c, companyID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return

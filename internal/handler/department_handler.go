@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/auhmaugmaufm/predict-ticket-department-backend/internal/auth"
 	"github.com/auhmaugmaufm/predict-ticket-department-backend/internal/domain"
 	"github.com/auhmaugmaufm/predict-ticket-department-backend/internal/dto"
 	"github.com/auhmaugmaufm/predict-ticket-department-backend/pkg/config"
@@ -42,11 +43,17 @@ func (h *DepartmentHandler) AddDepartments(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
 		return
 	}
+	companyID, ok := auth.GetCompanyID(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "missing company_id"})
+		return
+	}
+
 	departments := make([]domain.Department, len(d.DepartmentName))
 	for i, departmentName := range d.DepartmentName {
 		departments[i] = domain.Department{
 			DepartmentName: departmentName,
-			CompanyID:      d.CompanyID,
+			CompanyID:      companyID,
 		}
 	}
 	err := h.svc.AddDepartments(c, departments)

@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/auhmaugmaufm/predict-ticket-department-backend/internal/auth"
 	"github.com/auhmaugmaufm/predict-ticket-department-backend/internal/domain"
 	"github.com/auhmaugmaufm/predict-ticket-department-backend/internal/dto"
 	"github.com/auhmaugmaufm/predict-ticket-department-backend/pkg/config"
@@ -67,12 +68,13 @@ func (h *FormHandler) SubmitForm(c *gin.Context) {
 // @Failure 500 {object} map[string]string
 // @Router /api/v1/forms/{company_id} [get]
 func (h *FormHandler) GetSubmitFormCompanyID(c *gin.Context) {
-	company_id, err := uuid.Parse(c.Param("company_id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid company_id"})
+	companyID, ok := auth.GetCompanyID(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "missing company_id"})
 		return
 	}
-	forms, err := h.svc.GetSubmitFormByCompanyID(c, company_id)
+
+	forms, err := h.svc.GetSubmitFormByCompanyID(c, companyID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
@@ -92,16 +94,17 @@ func (h *FormHandler) GetSubmitFormCompanyID(c *gin.Context) {
 // @Failure 500 {object} map[string]string
 // @Router /api/v1/forms/{company_id}/per-day [get]
 func (h *FormHandler) GetSubmitFormPerDayByCompanyID(c *gin.Context) {
-	company_id, err := uuid.Parse(c.Param("company_id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid company_id"})
+	companyID, ok := auth.GetCompanyID(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "missing company_id"})
 		return
 	}
+
 	dateStr := c.Query("date")
 	if dateStr == "" {
 		dateStr = time.Now().AddDate(0, 0, -1).Format("2006-01-02")
 	}
-	forms, err := h.svc.GetSubmitFormPerDayByCompanyID(c, company_id, dateStr)
+	forms, err := h.svc.GetSubmitFormPerDayByCompanyID(c, companyID, dateStr)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return

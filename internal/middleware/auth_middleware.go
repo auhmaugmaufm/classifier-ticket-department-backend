@@ -6,6 +6,7 @@ import (
 
 	"github.com/auhmaugmaufm/predict-ticket-department-backend/internal/auth"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 func AuthMiddleware(jwtManager *auth.JWTManager) gin.HandlerFunc {
@@ -28,7 +29,14 @@ func AuthMiddleware(jwtManager *auth.JWTManager) gin.HandlerFunc {
 			return
 		}
 
+		companyID, err := uuid.Parse(claims.ID)
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "invalid company_id in token"})
+			return
+		}
+
 		c.Set("claims", claims)
+		c.Set("companyID", companyID)
 		c.Next()
 	}
 }

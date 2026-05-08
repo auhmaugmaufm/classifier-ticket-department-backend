@@ -42,6 +42,7 @@ func main() {
 
 	companyRepository := repository.NewCompanyRepository(db)
 	departmentRepository := repository.NewDepartmentRepository(db)
+
 	companyService := service.NewCompanyService(companyRepository, departmentRepository, txManager, jwtManger)
 	companyHandler := handler.NewCompanyHandler(companyService, cfg)
 
@@ -70,8 +71,12 @@ func main() {
 	defer formCron.Stop()
 
 	router := gin.Default()
+	router.Use(middleware.CORSMiddleware())
 
 	// Swagger
+	router.GET("/docs", func(c *gin.Context) {
+		c.Redirect(302, "/swagger/index.html")
+	})
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Submit Form: post /form/create
@@ -91,17 +96,17 @@ func main() {
 	// department.GET("/:company_id", departmentHandler.GetDepartmentsByCompanyID)
 
 	Link := protected.Group("/links")
+	Link.GET("", LinkHandler.GetLinkByCompanyID)
 	Link.POST("/create", LinkHandler.CreateLink)
-	Link.GET("/:company_id", LinkHandler.GetLinkByCompanyID)
 
 	forms := protected.Group("/forms")
-	forms.GET("/:company_id", formHandler.GetSubmitFormCompanyID)
-	forms.GET("/:company_id/per-day", formHandler.GetSubmitFormPerDayByCompanyID)
+	forms.GET("", formHandler.GetSubmitFormCompanyID)
+	forms.GET("/per-day", formHandler.GetSubmitFormPerDayByCompanyID)
 
 	ticket := protected.Group("/tickets")
+	ticket.GET("", ticketHandler.GetTicketsByCompanyID)
 	ticket.POST("/create", ticketHandler.CreateTicket)
 	ticket.POST("/create-bulk", ticketHandler.CreateTickets)
-	ticket.GET("/:company_id", ticketHandler.GetTicketsByCompanyID)
 
 	internal_protected := r.Group("")
 	internal_protected.Use(middleware.HMACMiddleware(cfg.HMACSecret))

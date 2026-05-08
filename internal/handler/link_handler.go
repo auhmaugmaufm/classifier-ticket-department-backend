@@ -4,8 +4,8 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/auhmaugmaufm/predict-ticket-department-backend/internal/auth"
 	"github.com/auhmaugmaufm/predict-ticket-department-backend/internal/domain"
-	"github.com/auhmaugmaufm/predict-ticket-department-backend/internal/dto"
 	"github.com/auhmaugmaufm/predict-ticket-department-backend/pkg/config"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -37,12 +37,12 @@ func NewLinkHandler(service LinkService, cfg *config.Config) *LinkHandler {
 // @Failure 500 {object} map[string]string
 // @Router /api/v1/company_form/create [post]
 func (h *LinkHandler) CreateLink(c *gin.Context) {
-	var f *dto.LinkRequest
-	if err := c.BindJSON(&f); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
+	companyID, ok := auth.GetCompanyID(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "missing company_id"})
 		return
 	}
-	err := h.svc.CreateLink(c, f.CompanyID)
+	err := h.svc.CreateLink(c, companyID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -62,13 +62,13 @@ func (h *LinkHandler) CreateLink(c *gin.Context) {
 // @Failure 500 {object} map[string]string
 // @Router /api/v1/company_form/{company_id} [get]
 func (h *LinkHandler) GetLinkByCompanyID(c *gin.Context) {
-	company_id, err := uuid.Parse(c.Param("company_id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid company_id"})
+	companyID, ok := auth.GetCompanyID(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "missing company_id"})
 		return
 	}
 
-	company_form, err := h.svc.GetLinkByCompanyID(c, company_id)
+	company_form, err := h.svc.GetLinkByCompanyID(c, companyID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
