@@ -26,7 +26,7 @@ func NewDepartmentHandler(service DepartmentService, cfg *config.Config) *Depart
 	return &DepartmentHandler{svc: service, cfg: cfg}
 }
 
-// @Summary Add Departments
+// @Summary Create Departments
 // @Description Create department in company
 // @Tags department
 // @Accept json
@@ -37,7 +37,7 @@ func NewDepartmentHandler(service DepartmentService, cfg *config.Config) *Depart
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /api/v1/departments/add [post]
-func (h *DepartmentHandler) AddDepartments(c *gin.Context) {
+func (h *DepartmentHandler) CreateDepartment(c *gin.Context) {
 	var d *dto.DepartmentRequest
 	if err := c.BindJSON(&d); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})

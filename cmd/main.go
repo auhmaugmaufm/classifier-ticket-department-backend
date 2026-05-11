@@ -92,12 +92,12 @@ func main() {
 	protected.Use(middleware.AuthMiddleware(jwtManger))
 
 	department := protected.Group("/departments")
-	department.POST("/add", departmentHandler.AddDepartments)
+	department.POST("", departmentHandler.CreateDepartment)
 	// department.GET("/:company_id", departmentHandler.GetDepartmentsByCompanyID)
 
 	Link := protected.Group("/links")
 	Link.GET("", LinkHandler.GetLinkByCompanyID)
-	Link.POST("/create", LinkHandler.CreateLink)
+	Link.POST("", LinkHandler.CreateLink)
 
 	forms := protected.Group("/forms")
 	forms.GET("", formHandler.GetSubmitFormCompanyID)
@@ -105,12 +105,12 @@ func main() {
 
 	ticket := protected.Group("/tickets")
 	ticket.GET("", ticketHandler.GetTicketsByCompanyID)
-	ticket.POST("/create", ticketHandler.CreateTicket)
-	ticket.POST("/create-bulk", ticketHandler.CreateTickets)
+	ticket.POST("", ticketHandler.CreateTicket)
+	ticket.POST("/bulk", ticketHandler.CreateTickets)
 
-	internal_protected := r.Group("")
+	internal_protected := r.Group("internal")
 	internal_protected.Use(middleware.HMACMiddleware(cfg.HMACSecret))
-	internal_protected.POST("/create-bulk", ticketHandler.CreateTickets)
+	internal_protected.POST("/bulk", ticketHandler.CreateTickets)
 	internal_protected.GET("/departments/:company_id", departmentHandler.GetDepartmentsByCompanyID)
 
 	addr := fmt.Sprintf(":%s", cfg.AppPort)
