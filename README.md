@@ -59,7 +59,7 @@ Status: `200`, `400`, `401`
 
 ### Company Form (JWT)
 
-#### POST /api/v1/company_form/create
+#### POST /api/v1/links
 
 Create company form link metadata.
 
@@ -79,9 +79,9 @@ Request body:
 
 Status: `201`, `400`, `500`
 
-#### GET /api/v1/company_form/{company_id}
+#### GET /api/v1/links
 
-Get company form by company id.
+Get link form by company id.
 
 Headers:
 
@@ -93,7 +93,7 @@ Status: `200`, `400`, `500`
 
 ### Departments
 
-#### POST /api/v1/departments/add (JWT)
+#### POST /api/v1/departments (JWT)
 
 Add departments to a company.
 
@@ -107,14 +107,13 @@ Request body:
 
 ```json
 {
-	"company_id": "uuid-company-id",
 	"department_name": ["IT", "HR", "Support"]
 }
 ```
 
 Status: `201`, `400`, `500`
 
-#### GET /api/v1/departments/company/{company_id} (HMAC)
+#### GET /api/v1/internal/departments/company/{company_id} (HMAC)
 
 Get departments by company id.
 
@@ -128,7 +127,7 @@ Status: `200`, `400`, `500`
 
 ### Forms
 
-#### POST /api/v1/forms/submit
+#### POST /forms/submit
 
 Submit a form.
 
@@ -144,13 +143,13 @@ Request body:
 
 Status: `201`, `400`, `500`
 
-#### GET /api/v1/forms/{company_id}
+#### GET /api/v1/forms
 
 Get all forms by company id.
 
 Status: `200`, `400`, `500`
 
-#### GET /api/v1/forms/{company_id}/per-day?date=YYYY-MM-DD
+#### GET /api/v1/forms/per-day?date=YYYY-MM-DD
 
 Get forms by company id per day.
 
@@ -163,13 +162,13 @@ Status: `200`, `400`, `500`
 
 ### Tickets
 
-#### GET /api/v1/tickets/{company_id}
+#### GET /api/v1/tickets
 
 Get all tickets by company id.
 
 Status: `200`, `400`, `500`
 
-#### POST /api/v1/tickets/create (JWT)
+#### POST /api/v1/tickets (JWT)
 
 Create single ticket.
 
@@ -189,13 +188,13 @@ Request body:
 	"description": "User cannot connect to VPN",
 	"message": "Need urgent support",
 	"priority": "high",
-	"status": "open"
+	"status": "success"
 }
 ```
 
 Status: `200`, `400`, `500`
 
-#### POST /api/v1/tickets/create-bulk (HMAC)
+#### POST /api/v1/tickets/bulk (HMAC)
 
 Create multiple tickets in one request.
 
@@ -216,12 +215,14 @@ Request body:
 		"description": "User cannot connect to VPN",
 		"message": "Need urgent support",
 		"priority": "high",
-		"status": "open"
+		"status": "success"
 	}
 ]
 ```
 
 Status: `201`, `400`, `500`
+
+
 
 ## Troubleshooting
 
