@@ -37,7 +37,7 @@ func NewFormHandler(service FormService, cfg *config.Config) *FormHandler {
 // @Success 201 {object} map[string]string
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /api/v1/forms/submit [post]
+// @Router /forms/submit [post]
 func (h *FormHandler) SubmitForm(c *gin.Context) {
 	var req *dto.FormRequest
 	if err := c.BindJSON(&req); err != nil {
@@ -62,11 +62,10 @@ func (h *FormHandler) SubmitForm(c *gin.Context) {
 // @Tags form
 // @Accept json
 // @Produce json
-// @Param company_id path string true "Company ID"
 // @Success 200 {object} map[string]interface{}
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /api/v1/forms/{company_id} [get]
+// @Router /api/v1/forms [get]
 func (h *FormHandler) GetSubmitFormCompanyID(c *gin.Context) {
 	companyID, ok := auth.GetCompanyID(c)
 	if !ok {
@@ -87,12 +86,11 @@ func (h *FormHandler) GetSubmitFormCompanyID(c *gin.Context) {
 // @Tags form
 // @Accept json
 // @Produce json
-// @Param company_id path string true "Company ID"
 // @Param date query string false "Date in YYYY-MM-DD format; defaults to yesterday"
 // @Success 200 {object} map[string]interface{}
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /api/v1/forms/{company_id}/per-day [get]
+// @Router /api/v1/forms/per-day [get]
 func (h *FormHandler) GetSubmitFormPerDayByCompanyID(c *gin.Context) {
 	companyID, ok := auth.GetCompanyID(c)
 	if !ok {
@@ -101,6 +99,12 @@ func (h *FormHandler) GetSubmitFormPerDayByCompanyID(c *gin.Context) {
 	}
 
 	dateStr := c.Query("date")
+	if dateStr != "" {
+		if _, err := time.Parse("2006-01-02", dateStr); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid date format, use YYYY-MM-DD"})
+			return
+		}
+	}
 	if dateStr == "" {
 		dateStr = time.Now().AddDate(0, 0, -1).Format("2006-01-02")
 	}

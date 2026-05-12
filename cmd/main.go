@@ -110,7 +110,7 @@ func main() {
 
 	internal_protected := r.Group("internal")
 	internal_protected.Use(middleware.HMACMiddleware(cfg.HMACSecret))
-	internal_protected.POST("/bulk", ticketHandler.CreateTickets)
+	internal_protected.POST("/tickets/bulk", ticketHandler.CreateTickets)
 	internal_protected.GET("/departments/:company_id", departmentHandler.GetDepartmentsByCompanyID)
 
 	addr := fmt.Sprintf(":%s", cfg.AppPort)

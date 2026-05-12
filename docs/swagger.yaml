@@ -9,8 +9,6 @@ definitions:
     type: object
   dto.DepartmentRequest:
     properties:
-      company_id:
-        type: string
       department_name:
         items:
           type: string
@@ -23,11 +21,6 @@ definitions:
       link_id:
         type: string
       title:
-        type: string
-    type: object
-  dto.LinkRequest:
-    properties:
-      company_id:
         type: string
     type: object
   dto.TicketRequest:
@@ -54,81 +47,7 @@ info:
   title: Predict Ticket Department API
   version: "1.0"
 paths:
-  /api/v1/company_form/{company_id}:
-    get:
-      consumes:
-      - application/json
-      description: Get Company Form By company ID
-      parameters:
-      - description: Company ID
-        in: path
-        name: company_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      security:
-      - BearerAuth: []
-      summary: Get Company Form By company ID
-      tags:
-      - company_form
-  /api/v1/company_form/create:
-    post:
-      consumes:
-      - application/json
-      description: Create Company Form
-      parameters:
-      - description: Link credentials
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dto.LinkRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      security:
-      - BearerAuth: []
-      summary: Create Company Form
-      tags:
-      - company_form
-  /api/v1/departments/add:
+  /api/v1/departments:
     post:
       consumes:
       - application/json
@@ -163,10 +82,71 @@ paths:
             type: object
       security:
       - BearerAuth: []
-      summary: Add Departments
+      summary: Create Departments
       tags:
       - department
-  /api/v1/departments/company/{company_id}:
+  /api/v1/forms:
+    get:
+      consumes:
+      - application/json
+      description: Get all forms By company ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Forms By company ID
+      tags:
+      - form
+  /api/v1/forms/per-day:
+    get:
+      consumes:
+      - application/json
+      description: Get all forms per day By company ID
+      parameters:
+      - description: Date in YYYY-MM-DD format; defaults to yesterday
+        in: query
+        name: date
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Forms Per Day By company ID
+      tags:
+      - form
+  /api/v1/internal/departments/{company_id}:
     get:
       consumes:
       - application/json
@@ -206,90 +186,24 @@ paths:
       summary: Get Departments By company ID
       tags:
       - department
-  /api/v1/forms/{company_id}:
-    get:
-      consumes:
-      - application/json
-      description: Get all forms By company ID
-      parameters:
-      - description: Company ID
-        in: path
-        name: company_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Get Forms By company ID
-      tags:
-      - form
-  /api/v1/forms/{company_id}/per-day:
-    get:
-      consumes:
-      - application/json
-      description: Get all forms per day By company ID
-      parameters:
-      - description: Company ID
-        in: path
-        name: company_id
-        required: true
-        type: string
-      - description: Date in YYYY-MM-DD format; defaults to yesterday
-        in: query
-        name: date
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Get Forms Per Day By company ID
-      tags:
-      - form
-  /api/v1/forms/submit:
+  /api/v1/internal/tickets/bulk:
     post:
       consumes:
       - application/json
-      description: Submit Form to Company
+      description: Create multiple tickets in one request
       parameters:
-      - description: Form credentials
+      - description: HMAC signature (sha256=...)
+        in: header
+        name: X-HMAC-Signature
+        type: string
+      - description: Ticket credentials
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.FormRequest'
+          items:
+            $ref: '#/definitions/dto.TicketRequest'
+          type: array
       produces:
       - application/json
       responses:
@@ -311,9 +225,71 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Submit Form
+      security:
+      - HMACAuth: []
+      summary: Create Tickets
       tags:
-      - form
+      - ticket
+  /api/v1/links:
+    get:
+      consumes:
+      - application/json
+      description: Get Company Form By company ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get Company Form By company ID
+      tags:
+      - link
+    post:
+      consumes:
+      - application/json
+      description: Create Company Form
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create Company Form
+      tags:
+      - link
   /api/v1/login:
     post:
       consumes:
@@ -392,17 +368,11 @@ paths:
       summary: Register company
       tags:
       - Company
-  /api/v1/tickets/{company_id}:
+  /api/v1/tickets:
     get:
       consumes:
       - application/json
       description: Get all tickets by company ID
-      parameters:
-      - description: Company ID
-        in: path
-        name: company_id
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -423,10 +393,11 @@ paths:
             additionalProperties:
               type: string
             type: object
+      security:
+      - BearerAuth: []
       summary: Get Tickets By company ID
       tags:
       - ticket
-  /api/v1/tickets/create:
     post:
       consumes:
       - application/json
@@ -438,48 +409,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/dto.TicketRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Create Ticket
-      tags:
-      - ticket
-  /api/v1/tickets/create-bulk:
-    post:
-      consumes:
-      - application/json
-      description: Create multiple tickets in one request
-      parameters:
-      - description: HMAC signature (sha256=...)
-        in: header
-        name: X-HMAC-Signature
-        type: string
-      - description: Ticket credentials
-        in: body
-        name: request
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/dto.TicketRequest'
-          type: array
       produces:
       - application/json
       responses:
@@ -502,10 +431,46 @@ paths:
               type: string
             type: object
       security:
-      - HMACAuth: []
-      summary: Create Tickets
+      - BearerAuth: []
+      summary: Create Ticket
       tags:
       - ticket
+  /forms/submit:
+    post:
+      consumes:
+      - application/json
+      description: Submit Form to Company
+      parameters:
+      - description: Form credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.FormRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Submit Form
+      tags:
+      - form
 securityDefinitions:
   BearerAuth:
     in: header

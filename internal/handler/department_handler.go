@@ -36,7 +36,7 @@ func NewDepartmentHandler(service DepartmentService, cfg *config.Config) *Depart
 // @Success 201 {object} map[string]string
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /api/v1/departments/add [post]
+// @Router /api/v1/departments [post]
 func (h *DepartmentHandler) CreateDepartment(c *gin.Context) {
 	var d *dto.DepartmentRequest
 	if err := c.BindJSON(&d); err != nil {
@@ -61,7 +61,7 @@ func (h *DepartmentHandler) CreateDepartment(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "add departments success"})
+	c.JSON(http.StatusCreated, gin.H{"message": "add departments success"})
 }
 
 // @Summary Get Departments By company ID
@@ -75,15 +75,15 @@ func (h *DepartmentHandler) CreateDepartment(c *gin.Context) {
 // @Success 200 {object} map[string]interface{}
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /api/v1/departments/company/{company_id} [get]
+// @Router /api/v1/internal/departments/{company_id} [get]
 func (h *DepartmentHandler) GetDepartmentsByCompanyID(c *gin.Context) {
-	company_id, err := uuid.Parse(c.Param("company_id"))
+	companyID, err := uuid.Parse(c.Param("company_id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid company_id"})
 		return
 	}
 
-	departments, err := h.svc.GetDepartmentsByCompanyID(c, company_id)
+	departments, err := h.svc.GetDepartmentsByCompanyID(c, companyID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return

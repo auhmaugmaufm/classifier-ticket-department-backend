@@ -15,123 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/company_form/create": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Create Company Form",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "company_form"
-                ],
-                "summary": "Create Company Form",
-                "parameters": [
-                    {
-                        "description": "Link credentials",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.LinkRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/company_form/{company_id}": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Get Company Form By company ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "company_form"
-                ],
-                "summary": "Get Company Form By company ID",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Company ID",
-                        "name": "company_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/departments/add": {
+        "/api/v1/departments": {
             "post": {
                 "security": [
                     {
@@ -148,7 +32,7 @@ const docTemplate = `{
                 "tags": [
                     "department"
                 ],
-                "summary": "Add Departments",
+                "summary": "Create Departments",
                 "parameters": [
                     {
                         "description": "Department credentials",
@@ -191,7 +75,99 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/departments/company/{company_id}": {
+        "/api/v1/forms": {
+            "get": {
+                "description": "Get all forms By company ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "form"
+                ],
+                "summary": "Get Forms By company ID",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/forms/per-day": {
+            "get": {
+                "description": "Get all forms per day By company ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "form"
+                ],
+                "summary": "Get Forms Per Day By company ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Date in YYYY-MM-DD format; defaults to yesterday",
+                        "name": "date",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/internal/departments/{company_id}": {
             "get": {
                 "security": [
                     {
@@ -253,9 +229,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/forms/submit": {
+        "/api/v1/internal/tickets/bulk": {
             "post": {
-                "description": "Submit Form to Company",
+                "security": [
+                    {
+                        "HMACAuth": []
+                    }
+                ],
+                "description": "Create multiple tickets in one request",
                 "consumes": [
                     "application/json"
                 ],
@@ -263,17 +244,26 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "form"
+                    "ticket"
                 ],
-                "summary": "Submit Form",
+                "summary": "Create Tickets",
                 "parameters": [
                     {
-                        "description": "Form credentials",
+                        "type": "string",
+                        "description": "HMAC signature (sha256=...)",
+                        "name": "X-HMAC-Signature",
+                        "in": "header"
+                    },
+                    {
+                        "description": "Ticket credentials",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.FormRequest"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.TicketRequest"
+                            }
                         }
                     }
                 ],
@@ -308,9 +298,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/forms/{company_id}": {
+        "/api/v1/links": {
             "get": {
-                "description": "Get all forms By company ID",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get Company Form By company ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -318,18 +313,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "form"
+                    "link"
                 ],
-                "summary": "Get Forms By company ID",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Company ID",
-                        "name": "company_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
+                "summary": "Get Company Form By company ID",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -357,11 +343,14 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/api/v1/forms/{company_id}/per-day": {
-            "get": {
-                "description": "Get all forms per day By company ID",
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create Company Form",
                 "consumes": [
                     "application/json"
                 ],
@@ -369,30 +358,17 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "form"
+                    "link"
                 ],
-                "summary": "Get Forms Per Day By company ID",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Company ID",
-                        "name": "company_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Date in YYYY-MM-DD format; defaults to yesterday",
-                        "name": "date",
-                        "in": "query"
-                    }
-                ],
+                "summary": "Create Company Form",
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "type": "object",
-                            "additionalProperties": true
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "400": {
@@ -535,9 +511,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/tickets/create": {
-            "post": {
-                "description": "Create a single ticket",
+        "/api/v1/tickets": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get all tickets by company ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -547,26 +528,13 @@ const docTemplate = `{
                 "tags": [
                     "ticket"
                 ],
-                "summary": "Create Ticket",
-                "parameters": [
-                    {
-                        "description": "Ticket credentials",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.TicketRequest"
-                        }
-                    }
-                ],
+                "summary": "Get Tickets By company ID",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "additionalProperties": true
                         }
                     },
                     "400": {
@@ -588,16 +556,14 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/api/v1/tickets/create-bulk": {
+            },
             "post": {
                 "security": [
                     {
-                        "HMACAuth": []
+                        "BearerAuth": []
                     }
                 ],
-                "description": "Create multiple tickets in one request",
+                "description": "Create a single ticket",
                 "consumes": [
                     "application/json"
                 ],
@@ -607,24 +573,15 @@ const docTemplate = `{
                 "tags": [
                     "ticket"
                 ],
-                "summary": "Create Tickets",
+                "summary": "Create Ticket",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "HMAC signature (sha256=...)",
-                        "name": "X-HMAC-Signature",
-                        "in": "header"
-                    },
                     {
                         "description": "Ticket credentials",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/dto.TicketRequest"
-                            }
+                            "$ref": "#/definitions/dto.TicketRequest"
                         }
                     }
                 ],
@@ -659,9 +616,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/tickets/{company_id}": {
-            "get": {
-                "description": "Get all tickets by company ID",
+        "/forms/submit": {
+            "post": {
+                "description": "Submit Form to Company",
                 "consumes": [
                     "application/json"
                 ],
@@ -669,24 +626,28 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "ticket"
+                    "form"
                 ],
-                "summary": "Get Tickets By company ID",
+                "summary": "Submit Form",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Company ID",
-                        "name": "company_id",
-                        "in": "path",
-                        "required": true
+                        "description": "Form credentials",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.FormRequest"
+                        }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "type": "object",
-                            "additionalProperties": true
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "400": {
@@ -726,9 +687,6 @@ const docTemplate = `{
         "dto.DepartmentRequest": {
             "type": "object",
             "properties": {
-                "company_id": {
-                    "type": "string"
-                },
                 "department_name": {
                     "type": "array",
                     "items": {
@@ -747,14 +705,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.LinkRequest": {
-            "type": "object",
-            "properties": {
-                "company_id": {
                     "type": "string"
                 }
             }

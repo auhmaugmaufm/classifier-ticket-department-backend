@@ -2,7 +2,6 @@ package handler
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/auhmaugmaufm/predict-ticket-department-backend/internal/auth"
@@ -33,11 +32,12 @@ func NewTicketHandler(service TicketService, cfg *config.Config) *TicketHandler 
 // @Tags ticket
 // @Accept json
 // @Produce json
+// @Security BearerAuth
 // @Param request body dto.TicketRequest true "Ticket credentials"
-// @Success 200 {object} map[string]string
+// @Success 201 {object} map[string]string
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /api/v1/tickets/create [post]
+// @Router /api/v1/tickets [post]
 func (h *TicketHandler) CreateTicket(c *gin.Context) {
 	var req *dto.TicketRequest
 	if err := c.BindJSON(&req); err != nil {
@@ -72,14 +72,13 @@ func (h *TicketHandler) CreateTicket(c *gin.Context) {
 // @Success 201 {object} map[string]string
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /api/v1/tickets/create-bulk [post]
+// @Router /api/v1/internal/tickets/bulk [post]
 func (h *TicketHandler) CreateTickets(c *gin.Context) {
 	var req []dto.TicketRequest
 	if err := c.BindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
 		return
 	}
-	fmt.Printf("%v\n", req)
 	tickets := make([]domain.Ticket, len(req))
 	for i, t := range req {
 		priority := domain.TicketPriority(t.Priority)
@@ -106,11 +105,11 @@ func (h *TicketHandler) CreateTickets(c *gin.Context) {
 // @Tags ticket
 // @Accept json
 // @Produce json
-// @Param company_id path string true "Company ID"
+// @Security BearerAuth
 // @Success 200 {object} map[string]interface{}
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /api/v1/tickets/{company_id} [get]
+// @Router /api/v1/tickets [get]
 func (h *TicketHandler) GetTicketsByCompanyID(c *gin.Context) {
 	companyID, ok := auth.GetCompanyID(c)
 	if !ok {

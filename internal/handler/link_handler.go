@@ -27,15 +27,14 @@ func NewLinkHandler(service LinkService, cfg *config.Config) *LinkHandler {
 
 // @Summary Create Company Form
 // @Description Create Company Form
-// @Tags company_form
+// @Tags link
 // @Accept json
 // @Produce json
 // @Security BearerAuth
-// @Param request body dto.LinkRequest true "Link credentials"
 // @Success 201 {object} map[string]string
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /api/v1/company_form/create [post]
+// @Router /api/v1/links [post]
 func (h *LinkHandler) CreateLink(c *gin.Context) {
 	companyID, ok := auth.GetCompanyID(c)
 	if !ok {
@@ -52,15 +51,14 @@ func (h *LinkHandler) CreateLink(c *gin.Context) {
 
 // @Summary Get Company Form By company ID
 // @Description  Get Company Form By company ID
-// @Tags company_form
+// @Tags link
 // @Accept json
 // @Produce json
 // @Security BearerAuth
-// @Param company_id path string true "Company ID"
 // @Success 200 {object} map[string]interface{}
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /api/v1/company_form/{company_id} [get]
+// @Router /api/v1/links [get]
 func (h *LinkHandler) GetLinkByCompanyID(c *gin.Context) {
 	companyID, ok := auth.GetCompanyID(c)
 	if !ok {
@@ -68,10 +66,14 @@ func (h *LinkHandler) GetLinkByCompanyID(c *gin.Context) {
 		return
 	}
 
-	company_form, err := h.svc.GetLinkByCompanyID(c, companyID)
+	companyForm, err := h.svc.GetLinkByCompanyID(c, companyID)
+	if companyForm == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "link not found"})
+		return
+	}
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"data": company_form})
+	c.JSON(http.StatusOK, gin.H{"data": companyForm})
 }
