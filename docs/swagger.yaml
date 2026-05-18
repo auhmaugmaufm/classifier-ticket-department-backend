@@ -48,6 +48,35 @@ info:
   version: "1.0"
 paths:
   /api/v1/departments:
+    get:
+      consumes:
+      - application/json
+      description: Get Departments By company ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - HMACAuth: []
+      summary: Get Departments By company ID
+      tags:
+      - department
     post:
       consumes:
       - application/json
@@ -182,7 +211,7 @@ paths:
               type: string
             type: object
       security:
-      - HMACAuth: []
+      - BearerAuth: []
       summary: Get Departments By company ID
       tags:
       - department

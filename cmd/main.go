@@ -92,8 +92,8 @@ func main() {
 	protected.Use(middleware.AuthMiddleware(jwtManger))
 
 	department := protected.Group("/departments")
+	department.GET("", departmentHandler.GetDepartmentsByCompanyIDAuth)
 	department.POST("", departmentHandler.CreateDepartment)
-	// department.GET("/:company_id", departmentHandler.GetDepartmentsByCompanyID)
 
 	Link := protected.Group("/links")
 	Link.GET("", LinkHandler.GetLinkByCompanyID)

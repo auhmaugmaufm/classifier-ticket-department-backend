@@ -16,6 +16,51 @@ const docTemplate = `{
     "basePath": "{{.BasePath}}",
     "paths": {
         "/api/v1/departments": {
+            "get": {
+                "security": [
+                    {
+                        "HMACAuth": []
+                    }
+                ],
+                "description": "Get Departments By company ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "department"
+                ],
+                "summary": "Get Departments By company ID",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -171,7 +216,7 @@ const docTemplate = `{
             "get": {
                 "security": [
                     {
-                        "HMACAuth": []
+                        "BearerAuth": []
                     }
                 ],
                 "description": "Get Departments By company ID",
