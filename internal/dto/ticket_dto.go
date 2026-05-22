@@ -1,8 +1,13 @@
 package dto
 
 import (
+	"github.com/auhmaugmaufm/predict-ticket-department-backend/internal/domain"
 	"github.com/google/uuid"
 )
+
+type UpdateTicketStatusRequest struct {
+	Status domain.TicketStatus `json:"status"`
+}
 
 type TicketRequest struct {
 	Message       string     `json:"message"`

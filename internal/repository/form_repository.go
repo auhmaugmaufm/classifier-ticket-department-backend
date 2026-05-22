@@ -23,8 +23,7 @@ func (r *formRepository) Create(ctx context.Context, form *domain.Form) error {
 func (r *formRepository) GetByCompanyID(ctx context.Context, company_id uuid.UUID) ([]domain.Form, error) {
 	var forms []domain.Form
 	err := r.db.WithContext(ctx).
-		Joins("Join links ON links.id = forms.link_id").
-		Where("links.company_id = ?", company_id).Find(&forms).Error
+		Where("forms.company_id = ?", company_id).Find(&forms).Error
 	if err != nil {
 		return nil, err
 	}
@@ -34,10 +33,9 @@ func (r *formRepository) GetByCompanyID(ctx context.Context, company_id uuid.UUI
 func (r *formRepository) GetFormCompanyID(ctx context.Context, company_id uuid.UUID, dateStr string) ([]domain.Form, error) {
 	var forms []domain.Form
 	err := r.db.WithContext(ctx).
-		Select("forms.id", "forms.link_id", "forms.title", "forms.description").
-		Joins("Join links ON links.id = forms.link_id").
+		Select("forms.id", "forms.company_id", "forms.title", "forms.description").
 		Where("DATE(forms.created_at) = ?", dateStr).
-		Where("links.company_id = ?", company_id).
+		Where("forms.company_id = ?", company_id).
 		Find(&forms).Error
 	if err != nil {
 		return nil, err

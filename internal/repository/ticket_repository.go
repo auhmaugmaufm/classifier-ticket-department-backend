@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 
 	"github.com/auhmaugmaufm/predict-ticket-department-backend/internal/domain"
 	"github.com/google/uuid"
@@ -12,7 +13,7 @@ type ticketRepository struct {
 	db *gorm.DB
 }
 
-func NewTicketRepositry(db *gorm.DB) domain.TicketRepository {
+func NewTicketRepository(db *gorm.DB) domain.TicketRepository {
 	return &ticketRepository{db: db}
 }
 
@@ -33,4 +34,21 @@ func (r *ticketRepository) GetByCompanyID(ctx context.Context, company_id uuid.U
 		return nil, err
 	}
 	return ticket, nil
+}
+
+func (r *ticketRepository) UpdateTicketStatus(ctx context.Context, id uuid.UUID, status domain.TicketStatus) error {
+	result := r.db.WithContext(ctx).
+		Model(&domain.Ticket{}).
+		Where("id = ?", id).
+		Update("status", status)
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return errors.New("ticket not found")
+	}
+
+	return nil
 }

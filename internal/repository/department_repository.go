@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 
 	"github.com/auhmaugmaufm/predict-ticket-department-backend/internal/domain"
 	"github.com/google/uuid"
@@ -35,4 +36,17 @@ func (r *departmentRepository) GetByCompanyID(ctx context.Context, company_id uu
 		return nil, err
 	}
 	return departments, nil
+}
+
+func (r *departmentRepository) UpdateStatus(ctx context.Context, id uuid.UUID, isActive bool) error {
+	result := r.db.WithContext(ctx).Model(&domain.Department{}).Where("id = ?", id).Update("is_active", isActive)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return errors.New("ticket not found")
+	}
+
+	return nil
 }

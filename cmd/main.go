@@ -90,6 +90,7 @@ func main() {
 	department := protected.Group("/departments")
 	department.GET("", departmentHandler.GetDepartmentsByCompanyIDAuth)
 	department.POST("", departmentHandler.CreateDepartment)
+	department.PATCH("/:id", departmentHandler.UpdateDepartmentStatus)
 
 	forms := protected.Group("/forms")
 	forms.GET("", formHandler.GetSubmitFormCompanyID)
@@ -99,7 +100,7 @@ func main() {
 	ticket.GET("", ticketHandler.GetTicketsByCompanyID)
 	ticket.POST("", ticketHandler.CreateTicket)
 	ticket.POST("/bulk", ticketHandler.CreateTickets)
-	ticket.PATCH("/:id")
+	ticket.PATCH("/:id", ticketHandler.UpdateTicketStatus)
 
 	internal_protected := r.Group("internal")
 	internal_protected.Use(middleware.HMACMiddleware(cfg.HMACSecret))

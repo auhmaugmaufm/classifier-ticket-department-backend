@@ -16,6 +16,7 @@ type TicketService interface {
 	CreateTicket(ctx context.Context, ticket *domain.Ticket) error
 	CreateTickets(ctx context.Context, tickets []domain.Ticket) error
 	GetTicketsByCompanyID(ctx context.Context, company_id uuid.UUID) ([]domain.Ticket, error)
+	UpdateTicketStatusByTicketID(ctx context.Context, id uuid.UUID, status domain.TicketStatus) error
 }
 
 type TicketHandler struct {
@@ -46,12 +47,13 @@ func (h *TicketHandler) CreateTicket(c *gin.Context) {
 	}
 	priority := domain.TicketPriority(req.Priority)
 	ticket := &domain.Ticket{
-		Message:      req.Message,
-		Status:       domain.PredictStatus(req.Status),
-		Title:        req.Title,
-		Description:  req.Description,
-		DepartmentID: req.DepartmentID,
-		Priority:     &priority,
+		Message:       req.Message,
+		PredictStatus: domain.PredictStatus(req.PredictStatus),
+		Status:        domain.StatusPending,
+		Title:         req.Title,
+		Description:   req.Description,
+		DepartmentID:  req.DepartmentID,
+		Priority:      &priority,
 	}
 	err := h.svc.CreateTicket(c, ticket)
 	if err != nil {
@@ -83,13 +85,14 @@ func (h *TicketHandler) CreateTickets(c *gin.Context) {
 	for i, t := range req {
 		priority := domain.TicketPriority(t.Priority)
 		tickets[i] = domain.Ticket{
-			Message:      t.Message,
-			Status:       domain.PredictStatus(t.Status),
-			Title:        t.Title,
-			Description:  t.Description,
-			FormID:       t.FormID,
-			DepartmentID: t.DepartmentID,
-			Priority:     &priority,
+			Message:       t.Message,
+			PredictStatus: domain.PredictStatus(t.PredictStatus),
+			Status:        domain.StatusPending,
+			Title:         t.Title,
+			Description:   t.Description,
+			FormID:        t.FormID,
+			DepartmentID:  t.DepartmentID,
+			Priority:      &priority,
 		}
 	}
 	err := h.svc.CreateTickets(c, tickets)
@@ -123,4 +126,39 @@ func (h *TicketHandler) GetTicketsByCompanyID(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"data": tickets})
+}
+
+func (h *TicketHandler) UpdateTicketStatus(c *gin.Context) {
+	ticketID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid ticket id",
+		})
+		return
+	}
+
+	var req dto.UpdateTicketStatusRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid request body",
+		})
+		return
+	}
+
+	err = h.svc.UpdateTicketStatusByTicketID(
+		c,
+		ticketID,
+		req.Status,
+	)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "ticket status updated",
+	})
 }

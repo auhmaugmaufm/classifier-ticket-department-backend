@@ -23,6 +23,10 @@ func (s *TicketService) CreateTickets(ctx context.Context, tickets []domain.Tick
 	return s.repo.CreateBulk(ctx, tickets)
 }
 
-func (s *TicketService) GetTicketsByCompanyID(ctx context.Context, company_id uuid.UUID) ([]domain.Ticket, error) {
-	return s.repo.GetByCompanyID(ctx, company_id)
+func (s *TicketService) GetTicketsByCompanyID(ctx context.Context, companyID uuid.UUID) ([]domain.Ticket, error) {
+	return s.repo.GetByCompanyID(ctx, companyID)
+}
+
+func (s *TicketService) UpdateTicketStatusByTicketID(ctx context.Context, id uuid.UUID, status domain.TicketStatus) error {
+	return s.repo.UpdateTicketStatus(ctx, id, status)
 }

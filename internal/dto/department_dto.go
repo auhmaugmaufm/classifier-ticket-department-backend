@@ -1,6 +1,12 @@
 package dto
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+)
+
+type UpdateDepartmentStatusRequest struct {
+	IsActive bool `json:"is_active"`
+}
 
 type DepartmentRequest struct {
 	DepartmentName []string `json:"department_name"`

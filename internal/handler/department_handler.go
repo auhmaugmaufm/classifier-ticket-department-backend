@@ -15,6 +15,7 @@ import (
 type DepartmentService interface {
 	AddDepartments(ctx context.Context, departments []domain.Department) error
 	GetDepartmentsByCompanyID(ctx context.Context, company_id uuid.UUID) ([]domain.Department, error)
+	UpdateDepartmentStatus(ctx context.Context, id uuid.UUID, isActive bool) error
 }
 
 type DepartmentHandler struct {
@@ -114,4 +115,35 @@ func (h *DepartmentHandler) GetDepartmentsByCompanyIDAuth(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"data": departments})
+}
+
+func (h *DepartmentHandler) UpdateDepartmentStatus(c *gin.Context) {
+	departmentID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid ticket id",
+		})
+		return
+	}
+
+	var req dto.UpdateDepartmentStatusRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid request body",
+		})
+		return
+	}
+
+	err = h.svc.UpdateDepartmentStatus(c, departmentID, req.IsActive)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "department status updated",
+	})
 }

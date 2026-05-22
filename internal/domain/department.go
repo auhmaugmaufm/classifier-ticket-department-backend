@@ -25,4 +25,5 @@ type DepartmentRepository interface {
 	CreateTx(tx interface{}, ctx context.Context, department *Department) error
 	CreateBulk(ctx context.Context, departments []Department) error
 	GetByCompanyID(ctx context.Context, company_id uuid.UUID) ([]Department, error)
+	UpdateStatus(ctx context.Context, id uuid.UUID, isActive bool) error
 }
