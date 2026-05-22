@@ -746,7 +746,7 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
-                "link_id": {
+                "company_id": {
                     "type": "string"
                 },
                 "title": {

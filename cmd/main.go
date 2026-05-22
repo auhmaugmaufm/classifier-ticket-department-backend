@@ -53,16 +53,12 @@ func main() {
 	formService := service.NewFormService(formRepository)
 	formHandler := handler.NewFormHandler(formService, cfg)
 
-	LinkRepository := repository.NewLinkRepository(db)
-	LinkService := service.NewLinkService(LinkRepository)
-	LinkHandler := handler.NewLinkHandler(LinkService, cfg)
-
 	aiService := service.NewAIService(
 		cfg.AIBackendUrl,
 		cfg.HMACSecret,
 	)
 
-	ticketRepository := repository.NewTicketRepositry(db)
+	ticketRepository := repository.NewTicketRepository(db)
 	ticketService := service.NewTicketService(ticketRepository)
 	ticketHandler := handler.NewTicketHandler(ticketService, cfg)
 
@@ -95,10 +91,6 @@ func main() {
 	department.GET("", departmentHandler.GetDepartmentsByCompanyIDAuth)
 	department.POST("", departmentHandler.CreateDepartment)
 
-	Link := protected.Group("/links")
-	Link.GET("", LinkHandler.GetLinkByCompanyID)
-	Link.POST("", LinkHandler.CreateLink)
-
 	forms := protected.Group("/forms")
 	forms.GET("", formHandler.GetSubmitFormCompanyID)
 	forms.GET("/per-day", formHandler.GetSubmitFormPerDayByCompanyID)
@@ -107,6 +99,7 @@ func main() {
 	ticket.GET("", ticketHandler.GetTicketsByCompanyID)
 	ticket.POST("", ticketHandler.CreateTicket)
 	ticket.POST("/bulk", ticketHandler.CreateTickets)
+	ticket.PATCH("/:id")
 
 	internal_protected := r.Group("internal")
 	internal_protected.Use(middleware.HMACMiddleware(cfg.HMACSecret))

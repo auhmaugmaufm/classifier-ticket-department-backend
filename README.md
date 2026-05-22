@@ -137,7 +137,7 @@ Request body:
 {
 	"title": "Cannot access VPN",
 	"description": "VPN disconnected every 5 minutes",
-	"link_id": "uuid-link-id"
+	"company_id": "uuid-company-id"
 }
 ```
 

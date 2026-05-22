@@ -9,11 +9,17 @@ import (
 )
 
 type PredictStatus string
+type TicketStatus string
 type TicketPriority string
 
 const (
 	StatusFailed  PredictStatus = "failed"
 	StatusSuccess PredictStatus = "success"
+)
+const (
+	StatusOpened  TicketStatus = "opened"
+	StatusPending TicketStatus = "pending"
+	StatusClosed  TicketStatus = "closed"
 )
 
 const (
@@ -23,17 +29,18 @@ const (
 )
 
 type Ticket struct {
-	ID           uuid.UUID       `json:"id" gorm:"type:uuid;primaryKey;default:gen_random_uuid()"`
-	Message      string          `json:"message"`
-	Status       PredictStatus   `json:"status"`
-	Title        string          `json:"title"`
-	Description  string          `json:"description"`
-	FormID       uuid.UUID       `json:"form_id" gorm:"type:uuid;not null;index"`
-	DepartmentID *uuid.UUID      `json:"department_id,omitempty" gorm:"type:uuid;index"`
-	Priority     *TicketPriority `json:"priority,omitempty"`
-	CreatedAt    time.Time       `json:"created_at" gorm:"autoCreateTime"`
-	UpdatedAt    time.Time       `json:"updated_at" gorm:"autoUpdateTime"`
-	DeletedAt    gorm.DeletedAt  `json:"deleted_at" gorm:"index"`
+	ID            uuid.UUID       `json:"id" gorm:"type:uuid;primaryKey;default:gen_random_uuid()"`
+	Message       string          `json:"message"`
+	PredictStatus PredictStatus   `json:"predict_status"`
+	Status        TicketStatus    `json:"status"`
+	Title         string          `json:"title"`
+	Description   string          `json:"description"`
+	FormID        uuid.UUID       `json:"form_id" gorm:"type:uuid;not null;index"`
+	DepartmentID  *uuid.UUID      `json:"department_id,omitempty" gorm:"type:uuid;index"`
+	Priority      *TicketPriority `json:"priority,omitempty"`
+	CreatedAt     time.Time       `json:"created_at" gorm:"autoCreateTime"`
+	UpdatedAt     time.Time       `json:"updated_at" gorm:"autoUpdateTime"`
+	DeletedAt     gorm.DeletedAt  `json:"deleted_at" gorm:"index"`
 
 	Form       *Form       `json:"form,omitempty" gorm:"foreignKey:FormID"`
 	Department *Department `json:"department,omitempty" gorm:"foreignKey:DepartmentID"`
@@ -42,5 +49,6 @@ type Ticket struct {
 type TicketRepository interface {
 	Create(ctx context.Context, ticket *Ticket) error
 	CreateBulk(ctx context.Context, tickets []Ticket) error
-	GetByCompanyID(ctx context.Context, company_id uuid.UUID) ([]Ticket, error)
+	GetByCompanyID(ctx context.Context, companyID uuid.UUID) ([]Ticket, error)
+	UpdateTicketStatus(ctx context.Context, id uuid.UUID, status TicketStatus) error
 }
