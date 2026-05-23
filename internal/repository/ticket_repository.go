@@ -28,8 +28,11 @@ func (r *ticketRepository) CreateBulk(ctx context.Context, tickets []domain.Tick
 func (r *ticketRepository) GetByCompanyID(ctx context.Context, companyID uuid.UUID) ([]domain.Ticket, error) {
 	var tickets []domain.Ticket
 	err := r.db.WithContext(ctx).Preload("Department").
+		Unscoped().
 		Joins("JOIN departments ON departments.id = tickets.department_id").
-		Where("departments.company_id = ?", companyID).Find(&tickets).Error
+		Where("departments.company_id = ?", companyID).
+		Order("tickets.created_at DESC").
+		Find(&tickets).Error
 	if err != nil {
 		return nil, err
 	}

@@ -16,6 +16,7 @@ type DepartmentService interface {
 	AddDepartments(ctx context.Context, departments []domain.Department) error
 	GetDepartmentsByCompanyID(ctx context.Context, companyID uuid.UUID) ([]domain.Department, error)
 	UpdateDepartmentStatus(ctx context.Context, id uuid.UUID, isActive bool) error
+	DeleteDepartmentByID(ctx context.Context, id uuid.UUID) error
 }
 
 type DepartmentHandler struct {
@@ -156,5 +157,27 @@ func (h *DepartmentHandler) UpdateDepartmentStatus(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "department status updated",
+	})
+}
+
+func (h *DepartmentHandler) DeleteDepartmentByID(c *gin.Context) {
+	departmentID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid department id",
+		})
+		return
+	}
+
+	err = h.svc.DeleteDepartmentByID(c, departmentID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "department deleted successfully",
 	})
 }

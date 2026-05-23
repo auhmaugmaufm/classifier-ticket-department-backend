@@ -26,4 +26,5 @@ type DepartmentRepository interface {
 	CreateBulk(ctx context.Context, departments []Department) error
 	GetByCompanyID(ctx context.Context, company_id uuid.UUID) ([]Department, error)
 	UpdateStatus(ctx context.Context, id uuid.UUID, isActive bool) error
+	Delete(ctx context.Context, id uuid.UUID) error
 }

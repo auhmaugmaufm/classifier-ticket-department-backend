@@ -91,6 +91,7 @@ func main() {
 	department.GET("", departmentHandler.GetDepartmentsFromToken)
 	department.POST("", departmentHandler.CreateDepartment)
 	department.PATCH("/:id", departmentHandler.UpdateDepartmentStatus)
+	department.DELETE("/:id", departmentHandler.DeleteDepartmentByID)
 
 	forms := protected.Group("/forms")
 	forms.GET("", formHandler.GetSubmitFormCompanyID)

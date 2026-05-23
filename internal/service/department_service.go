@@ -26,3 +26,7 @@ func (s *DepartmentService) GetDepartmentsByCompanyID(ctx context.Context, compa
 func (s *DepartmentService) UpdateDepartmentStatus(ctx context.Context, id uuid.UUID, isActive bool) error {
 	return s.repo.UpdateStatus(ctx, id, isActive)
 }
+
+func (s *DepartmentService) DeleteDepartmentByID(ctx context.Context, id uuid.UUID) error {
+	return s.repo.Delete(ctx, id)
+}
