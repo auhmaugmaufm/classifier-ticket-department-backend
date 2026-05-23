@@ -45,7 +45,7 @@ func (r *departmentRepository) UpdateStatus(ctx context.Context, id uuid.UUID, i
 	}
 
 	if result.RowsAffected == 0 {
-		return errors.New("ticket not found")
+		return errors.New("department not found")
 	}
 
 	return nil

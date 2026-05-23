@@ -88,7 +88,7 @@ func main() {
 	protected.Use(middleware.AuthMiddleware(jwtManger))
 
 	department := protected.Group("/departments")
-	department.GET("", departmentHandler.GetDepartmentsByCompanyIDAuth)
+	department.GET("", departmentHandler.GetDepartmentsFromToken)
 	department.POST("", departmentHandler.CreateDepartment)
 	department.PATCH("/:id", departmentHandler.UpdateDepartmentStatus)
 

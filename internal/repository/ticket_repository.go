@@ -25,15 +25,15 @@ func (r *ticketRepository) CreateBulk(ctx context.Context, tickets []domain.Tick
 	return r.db.WithContext(ctx).CreateInBatches(tickets, 100).Error
 }
 
-func (r *ticketRepository) GetByCompanyID(ctx context.Context, company_id uuid.UUID) ([]domain.Ticket, error) {
-	var ticket []domain.Ticket
+func (r *ticketRepository) GetByCompanyID(ctx context.Context, companyID uuid.UUID) ([]domain.Ticket, error) {
+	var tickets []domain.Ticket
 	err := r.db.WithContext(ctx).Preload("Department").
 		Joins("JOIN departments ON departments.id = tickets.department_id").
-		Where("departments.company_id = ?", company_id).Find(&ticket).Error
+		Where("departments.company_id = ?", companyID).Find(&tickets).Error
 	if err != nil {
 		return nil, err
 	}
-	return ticket, nil
+	return tickets, nil
 }
 
 func (r *ticketRepository) UpdateTicketStatus(ctx context.Context, id uuid.UUID, status domain.TicketStatus) error {

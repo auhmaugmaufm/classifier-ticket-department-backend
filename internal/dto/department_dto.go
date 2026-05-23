@@ -5,11 +5,11 @@ import (
 )
 
 type UpdateDepartmentStatusRequest struct {
-	IsActive bool `json:"is_active"`
+	IsActive *bool `json:"is_active" binding:"required"`
 }
 
 type DepartmentRequest struct {
-	DepartmentName []string `json:"department_name"`
+	DepartmentName []string `json:"department_name" binding:"required,min=1,dive,required"`
 }
 
 type DepartmentResponse struct {

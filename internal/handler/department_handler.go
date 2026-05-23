@@ -14,7 +14,7 @@ import (
 
 type DepartmentService interface {
 	AddDepartments(ctx context.Context, departments []domain.Department) error
-	GetDepartmentsByCompanyID(ctx context.Context, company_id uuid.UUID) ([]domain.Department, error)
+	GetDepartmentsByCompanyID(ctx context.Context, companyID uuid.UUID) ([]domain.Department, error)
 	UpdateDepartmentStatus(ctx context.Context, id uuid.UUID, isActive bool) error
 }
 
@@ -40,7 +40,7 @@ func NewDepartmentHandler(service DepartmentService, cfg *config.Config) *Depart
 // @Router /api/v1/departments [post]
 func (h *DepartmentHandler) CreateDepartment(c *gin.Context) {
 	var d *dto.DepartmentRequest
-	if err := c.BindJSON(&d); err != nil {
+	if err := c.ShouldBindJSON(&d); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
 		return
 	}
@@ -101,7 +101,7 @@ func (h *DepartmentHandler) GetDepartmentsByCompanyID(c *gin.Context) {
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /api/v1/departments [get]
-func (h *DepartmentHandler) GetDepartmentsByCompanyIDAuth(c *gin.Context) {
+func (h *DepartmentHandler) GetDepartmentsFromToken(c *gin.Context) {
 	companyID, ok := auth.GetCompanyID(c)
 	if !ok {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "missing company_id"})
@@ -132,7 +132,7 @@ func (h *DepartmentHandler) UpdateDepartmentStatus(c *gin.Context) {
 	departmentID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "invalid ticket id",
+			"error": "invalid department id",
 		})
 		return
 	}
@@ -146,7 +146,7 @@ func (h *DepartmentHandler) UpdateDepartmentStatus(c *gin.Context) {
 		return
 	}
 
-	err = h.svc.UpdateDepartmentStatus(c, departmentID, req.IsActive)
+	err = h.svc.UpdateDepartmentStatus(c, departmentID, *req.IsActive)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),

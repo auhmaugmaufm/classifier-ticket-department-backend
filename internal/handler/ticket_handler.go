@@ -15,7 +15,7 @@ import (
 type TicketService interface {
 	CreateTicket(ctx context.Context, ticket *domain.Ticket) error
 	CreateTickets(ctx context.Context, tickets []domain.Ticket) error
-	GetTicketsByCompanyID(ctx context.Context, company_id uuid.UUID) ([]domain.Ticket, error)
+	GetTicketsByCompanyID(ctx context.Context, companyID uuid.UUID) ([]domain.Ticket, error)
 	UpdateTicketStatusByTicketID(ctx context.Context, id uuid.UUID, status domain.TicketStatus) error
 }
 
@@ -41,7 +41,7 @@ func NewTicketHandler(service TicketService, cfg *config.Config) *TicketHandler 
 // @Router /api/v1/tickets [post]
 func (h *TicketHandler) CreateTicket(c *gin.Context) {
 	var req *dto.TicketRequest
-	if err := c.BindJSON(&req); err != nil {
+	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
 		return
 	}
@@ -49,7 +49,7 @@ func (h *TicketHandler) CreateTicket(c *gin.Context) {
 	ticket := &domain.Ticket{
 		Message:       req.Message,
 		PredictStatus: domain.PredictStatus(req.PredictStatus),
-		Status:        domain.StatusPending,
+		Status:        domain.TicketPending,
 		Title:         req.Title,
 		Description:   req.Description,
 		DepartmentID:  req.DepartmentID,
@@ -60,7 +60,7 @@ func (h *TicketHandler) CreateTicket(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "create ticket success"})
+	c.JSON(http.StatusCreated, gin.H{"message": "create ticket success"})
 }
 
 // @Summary Create Tickets
@@ -79,7 +79,7 @@ func (h *TicketHandler) CreateTicket(c *gin.Context) {
 // @Router /api/v1/internal/tickets/bulk [post]
 func (h *TicketHandler) CreateTickets(c *gin.Context) {
 	var req []dto.TicketRequest
-	if err := c.BindJSON(&req); err != nil {
+	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
 		return
 	}
@@ -89,7 +89,7 @@ func (h *TicketHandler) CreateTickets(c *gin.Context) {
 		tickets[i] = domain.Ticket{
 			Message:       t.Message,
 			PredictStatus: domain.PredictStatus(t.PredictStatus),
-			Status:        domain.StatusPending,
+			Status:        domain.TicketPending,
 			Title:         t.Title,
 			Description:   t.Description,
 			FormID:        t.FormID,

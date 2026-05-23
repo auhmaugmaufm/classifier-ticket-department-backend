@@ -13,13 +13,14 @@ type TicketStatus string
 type TicketPriority string
 
 const (
-	StatusFailed  PredictStatus = "failed"
-	StatusSuccess PredictStatus = "success"
+	PredictFailed  PredictStatus = "failed"
+	PredictSuccess PredictStatus = "success"
 )
+
 const (
-	StatusOpened  TicketStatus = "opened"
-	StatusPending TicketStatus = "pending"
-	StatusClosed  TicketStatus = "closed"
+	TicketOpened  TicketStatus = "opened"
+	TicketPending TicketStatus = "pending"
+	TicketClosed  TicketStatus = "closed"
 )
 
 const (
