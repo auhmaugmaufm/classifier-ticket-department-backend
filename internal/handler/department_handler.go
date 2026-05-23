@@ -71,10 +71,11 @@ func (h *DepartmentHandler) CreateDepartment(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Security HMACAuth
+// @Param company_id path string true "Company ID"
 // @Success 200 {object} map[string]interface{}
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /api/v1/departments [get]
+// @Router /api/v1/internal/departments/{company_id} [get]
 func (h *DepartmentHandler) GetDepartmentsByCompanyID(c *gin.Context) {
 	companyID, err := uuid.Parse(c.Param("company_id"))
 	if err != nil {
@@ -96,12 +97,10 @@ func (h *DepartmentHandler) GetDepartmentsByCompanyID(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Security BearerAuth
-// @Param X-HMAC-Signature header string false "HMAC signature (sha256=...)"
-// @Param company_id path string true "Company ID"
 // @Success 200 {object} map[string]interface{}
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Router /api/v1/internal/departments/{company_id} [get]
+// @Router /api/v1/departments [get]
 func (h *DepartmentHandler) GetDepartmentsByCompanyIDAuth(c *gin.Context) {
 	companyID, ok := auth.GetCompanyID(c)
 	if !ok {
@@ -117,6 +116,18 @@ func (h *DepartmentHandler) GetDepartmentsByCompanyIDAuth(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": departments})
 }
 
+// @Summary Update Department Status
+// @Description Update active status for a department
+// @Tags department
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Department ID"
+// @Param request body dto.UpdateDepartmentStatusRequest true "Department status payload"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /api/v1/departments/{id} [patch]
 func (h *DepartmentHandler) UpdateDepartmentStatus(c *gin.Context) {
 	departmentID, err := uuid.Parse(c.Param("id"))
 	if err != nil {

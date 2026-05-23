@@ -19,7 +19,7 @@ const docTemplate = `{
             "get": {
                 "security": [
                     {
-                        "HMACAuth": []
+                        "BearerAuth": []
                     }
                 ],
                 "description": "Get Departments By company ID",
@@ -92,6 +92,73 @@ const docTemplate = `{
                 "responses": {
                     "201": {
                         "description": "Created",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/departments/{id}": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update active status for a department",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "department"
+                ],
+                "summary": "Update Department Status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Department ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Department status payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateDepartmentStatusRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -216,7 +283,7 @@ const docTemplate = `{
             "get": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "HMACAuth": []
                     }
                 ],
                 "description": "Get Departments By company ID",
@@ -231,12 +298,6 @@ const docTemplate = `{
                 ],
                 "summary": "Get Departments By company ID",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "HMAC signature (sha256=...)",
-                        "name": "X-HMAC-Signature",
-                        "in": "header"
-                    },
                     {
                         "type": "string",
                         "description": "Company ID",
@@ -278,6 +339,9 @@ const docTemplate = `{
             "post": {
                 "security": [
                     {
+                        "BearerAuth": []
+                    },
+                    {
                         "HMACAuth": []
                     }
                 ],
@@ -312,100 +376,6 @@ const docTemplate = `{
                         }
                     }
                 ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/links": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Get Company Form By company ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "link"
-                ],
-                "summary": "Get Company Form By company ID",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Create Company Form",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "link"
-                ],
-                "summary": "Create Company Form",
                 "responses": {
                     "201": {
                         "description": "Created",
@@ -661,6 +631,145 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/tickets/bulk": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    },
+                    {
+                        "HMACAuth": []
+                    }
+                ],
+                "description": "Create multiple tickets in one request",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ticket"
+                ],
+                "summary": "Create Tickets",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "HMAC signature (sha256=...)",
+                        "name": "X-HMAC-Signature",
+                        "in": "header"
+                    },
+                    {
+                        "description": "Ticket credentials",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.TicketRequest"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/tickets/{id}": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update status for a ticket",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ticket"
+                ],
+                "summary": "Update Ticket Status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Ticket ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Ticket status payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateTicketStatusRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/forms/submit": {
             "post": {
                 "description": "Submit Form to Company",
@@ -718,6 +827,19 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "domain.TicketStatus": {
+            "type": "string",
+            "enum": [
+                "opened",
+                "pending",
+                "closed"
+            ],
+            "x-enum-varnames": [
+                "StatusOpened",
+                "StatusPending",
+                "StatusClosed"
+            ]
+        },
         "dto.CompanyRequest": {
             "type": "object",
             "properties": {
@@ -743,10 +865,10 @@ const docTemplate = `{
         "dto.FormRequest": {
             "type": "object",
             "properties": {
-                "description": {
+                "company_id": {
                     "type": "string"
                 },
-                "company_id": {
+                "description": {
                     "type": "string"
                 },
                 "title": {
@@ -769,14 +891,30 @@ const docTemplate = `{
                 "message": {
                     "type": "string"
                 },
-                "priority": {
+                "predict_status": {
                     "type": "string"
                 },
-                "status": {
+                "priority": {
                     "type": "string"
                 },
                 "title": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.UpdateDepartmentStatusRequest": {
+            "type": "object",
+            "properties": {
+                "is_active": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "dto.UpdateTicketStatusRequest": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "$ref": "#/definitions/domain.TicketStatus"
                 }
             }
         }

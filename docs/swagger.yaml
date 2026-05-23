@@ -1,5 +1,15 @@
 basePath: /
 definitions:
+  domain.TicketStatus:
+    enum:
+    - opened
+    - pending
+    - closed
+    type: string
+    x-enum-varnames:
+    - StatusOpened
+    - StatusPending
+    - StatusClosed
   dto.CompanyRequest:
     properties:
       email:
@@ -16,9 +26,9 @@ definitions:
     type: object
   dto.FormRequest:
     properties:
-      description:
-        type: string
       company_id:
+        type: string
+      description:
         type: string
       title:
         type: string
@@ -33,12 +43,22 @@ definitions:
         type: string
       message:
         type: string
-      priority:
+      predict_status:
         type: string
-      status:
+      priority:
         type: string
       title:
         type: string
+    type: object
+  dto.UpdateDepartmentStatusRequest:
+    properties:
+      is_active:
+        type: boolean
+    type: object
+  dto.UpdateTicketStatusRequest:
+    properties:
+      status:
+        $ref: '#/definitions/domain.TicketStatus'
     type: object
 host: localhost:8888
 info:
@@ -73,7 +93,7 @@ paths:
               type: string
             type: object
       security:
-      - HMACAuth: []
+      - BearerAuth: []
       summary: Get Departments By company ID
       tags:
       - department
@@ -112,6 +132,49 @@ paths:
       security:
       - BearerAuth: []
       summary: Create Departments
+      tags:
+      - department
+  /api/v1/departments/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Update active status for a department
+      parameters:
+      - description: Department ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Department status payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateDepartmentStatusRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update Department Status
       tags:
       - department
   /api/v1/forms:
@@ -181,10 +244,6 @@ paths:
       - application/json
       description: Get Departments By company ID
       parameters:
-      - description: HMAC signature (sha256=...)
-        in: header
-        name: X-HMAC-Signature
-        type: string
       - description: Company ID
         in: path
         name: company_id
@@ -211,7 +270,7 @@ paths:
               type: string
             type: object
       security:
-      - BearerAuth: []
+      - HMACAuth: []
       summary: Get Departments By company ID
       tags:
       - department
@@ -255,70 +314,11 @@ paths:
               type: string
             type: object
       security:
+      - BearerAuth: []
       - HMACAuth: []
       summary: Create Tickets
       tags:
       - ticket
-  /api/v1/links:
-    get:
-      consumes:
-      - application/json
-      description: Get Company Form By company ID
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      security:
-      - BearerAuth: []
-      summary: Get Company Form By company ID
-      tags:
-      - link
-    post:
-      consumes:
-      - application/json
-      description: Create Company Form
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      security:
-      - BearerAuth: []
-      summary: Create Company Form
-      tags:
-      - link
   /api/v1/login:
     post:
       consumes:
@@ -462,6 +462,94 @@ paths:
       security:
       - BearerAuth: []
       summary: Create Ticket
+      tags:
+      - ticket
+  /api/v1/tickets/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Update status for a ticket
+      parameters:
+      - description: Ticket ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Ticket status payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateTicketStatusRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update Ticket Status
+      tags:
+      - ticket
+  /api/v1/tickets/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Create multiple tickets in one request
+      parameters:
+      - description: HMAC signature (sha256=...)
+        in: header
+        name: X-HMAC-Signature
+        type: string
+      - description: Ticket credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/dto.TicketRequest'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      - HMACAuth: []
+      summary: Create Tickets
       tags:
       - ticket
   /forms/submit:
