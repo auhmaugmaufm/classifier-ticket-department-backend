@@ -16,10 +16,6 @@ func NewCompanyRepository(db *gorm.DB) domain.CompanyRepository {
 	return &companyRepository{db: db}
 }
 
-func (r *companyRepository) Create(ctx context.Context, company *domain.Company) error {
-	return r.db.WithContext(ctx).Create(company).Error
-}
-
 func (r *companyRepository) CreateTx(tx interface{}, ctx context.Context, company *domain.Company) error {
 	return tx.(*gorm.DB).WithContext(ctx).Create(company).Error
 }
