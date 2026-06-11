@@ -40,7 +40,7 @@ func NewTicketHandler(service TicketService, cfg *config.Config) *TicketHandler 
 // @Failure 500 {object} map[string]string
 // @Router /api/v1/tickets [post]
 func (h *TicketHandler) CreateTicket(c *gin.Context) {
-	var req *dto.TicketRequest
+	var req dto.TicketRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
 		return

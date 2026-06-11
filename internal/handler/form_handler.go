@@ -39,7 +39,7 @@ func NewFormHandler(service FormService, cfg *config.Config) *FormHandler {
 // @Failure 500 {object} map[string]string
 // @Router /forms/submit [post]
 func (h *FormHandler) SubmitForm(c *gin.Context) {
-	var req *dto.FormRequest
+	var req dto.FormRequest
 	if err := c.BindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
 		return

@@ -65,7 +65,7 @@ func (h *CompanyHandler) Register(c *gin.Context) {
 // @Failure 401 {object} map[string]string
 // @Router /api/v1/login [post]
 func (h *CompanyHandler) Login(c *gin.Context) {
-	var company *dto.CompanyRequest
+	var company dto.CompanyRequest
 	if err := c.BindJSON(&company); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
 		return

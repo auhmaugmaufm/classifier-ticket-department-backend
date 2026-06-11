@@ -40,7 +40,7 @@ func NewDepartmentHandler(service DepartmentService, cfg *config.Config) *Depart
 // @Failure 500 {object} map[string]string
 // @Router /api/v1/departments [post]
 func (h *DepartmentHandler) CreateDepartment(c *gin.Context) {
-	var d *dto.DepartmentRequest
+	var d dto.DepartmentRequest
 	if err := c.ShouldBindJSON(&d); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
 		return

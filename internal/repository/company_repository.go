@@ -27,7 +27,7 @@ func (r *companyRepository) GetAll(ctx context.Context) ([]domain.Company, error
 }
 
 func (r *companyRepository) GetByEmail(ctx context.Context, email string) (*domain.Company, error) {
-	var company *domain.Company
+	var company domain.Company
 	err := r.db.WithContext(ctx).Where("email = ?", email).First(&company).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, domain.ErrNotFound
@@ -35,5 +35,5 @@ func (r *companyRepository) GetByEmail(ctx context.Context, email string) (*doma
 	if err != nil {
 		return nil, err
 	}
-	return company, nil
+	return &company, nil
 }
